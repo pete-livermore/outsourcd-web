@@ -1,4 +1,3 @@
-import ManageableLogo from 'public/assets/svg/manageable-logo.svg'
 import { PropsWithChildren } from 'react'
 
 import { cn } from '@/utils/styles'

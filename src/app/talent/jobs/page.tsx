@@ -16,7 +16,7 @@ export default function JobsPage({
     <div>
       <Heading>Jobs</Heading>
       <JobFilters />
-      <div className='flex gap-x-6'>
+      <div className='flex gap-x-12'>
         <JobDetail className={cn(job ? 'flex-none basis-2/5' : 'hidden')} />
         <JobsList filters={{}} />
       </div>

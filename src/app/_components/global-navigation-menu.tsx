@@ -1,8 +1,11 @@
 'use client'
 
-import * as React from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import OutsourcdLogo from 'public/assets/svg/outsourcd-logo.svg'
+import * as React from 'react'
 
+import { Icons } from '@/components/icons'
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -13,7 +16,6 @@ import {
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu'
 import { cn } from '@/utils/styles'
-import { Icons } from '@/components/icons'
 
 const components: { title: string; href: string; description: string }[] = [
   {
@@ -54,8 +56,17 @@ const components: { title: string; href: string; description: string }[] = [
 ]
 
 export function GlobalNavigationMenu() {
+  const router = useRouter()
+
+  function handleLogoClick() {
+    router.push('/')
+  }
+
   return (
     <NavigationMenu>
+      <div className='cursor-pointer pt-1'>
+        <OutsourcdLogo height={75} width={300} onClick={handleLogoClick} />
+      </div>
       <NavigationMenuList>
         <NavigationMenuItem>
           <NavigationMenuTrigger>Getting started</NavigationMenuTrigger>
@@ -64,10 +75,10 @@ export function GlobalNavigationMenu() {
               <li className='row-span-3'>
                 <NavigationMenuLink asChild>
                   <a
-                    className='flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md'
+                    className='flex size-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md'
                     href='/'
                   >
-                    <Icons.Profile className='h-6 w-6' />
+                    <Icons.Profile className='size-6' />
                     <div className='mb-2 mt-4 text-lg font-medium'>
                       shadcn/ui
                     </div>

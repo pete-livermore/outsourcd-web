@@ -1,8 +1,11 @@
 import '@/styles/globals.css'
-import { Inter as FontSans } from 'next/font/google'
 
 import type { Metadata } from 'next'
+import { Inter as FontSans } from 'next/font/google'
+
 import { cn } from '@/utils/styles'
+
+import { GlobalNavigationMenu } from './_components/global-navigation-menu'
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -27,7 +30,8 @@ export default async function RootLayout({
           fontSans.variable,
         )}
       >
-        {children}
+        <GlobalNavigationMenu />
+        <main>{children}</main>
       </body>
     </html>
   )

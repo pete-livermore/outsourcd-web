@@ -28,7 +28,7 @@ export const fontSans = FontSans({
   variable: '--font-sans',
 })
 
-export default async function RootLayout({
+export default async function TalentLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
@@ -60,32 +60,5 @@ export default async function RootLayout({
   //   redirect('/error/500')
   // }
 
-  const navItems = [
-    { text: 'Jobs', icon: <Icons.Jobs />, href: '/talent/jobs' },
-    { text: 'Profile', icon: <Icons.Profile />, href: '/talent/profile' },
-  ]
-
-  return (
-    <div className='flex min-h-screen'>
-      <Sidebar className='hidden basis-72 lg:block'>
-        <nav>
-          <ul className='space-y-6 px-6'>
-            {navItems.map((item, i) => (
-              <li key={i}>
-                <Link href={item.href} className='flex space-x-4 px-2 py-1.5'>
-                  {item.icon}
-                  <p>{item.text}</p>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      </Sidebar>
-      <main className='grow px-6 py-8'>{children}</main>
-      {/* <Avatar className='fixed right-4 top-4 z-40 cursor-pointer'>
-            <AvatarImage src='https://github.com/shadc' alt='@shadcn' />
-            <AvatarFallback>{user.first_name[0]}</AvatarFallback>
-          </Avatar> */}
-    </div>
-  )
+  return <div className='px-16 py-8'>{children}</div>
 }
