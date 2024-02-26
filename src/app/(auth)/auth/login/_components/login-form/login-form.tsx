@@ -4,10 +4,11 @@ import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { useFormState, useFormStatus } from 'react-dom'
 
-import { login } from '@/app/auth/actions'
+import { login } from '@/app/(auth)/auth/actions'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Spinner } from '@/components/ui/spinner'
+import { cn } from '@/utils/styles'
 
 export type LoginFormState =
   | {
@@ -36,7 +37,9 @@ function FormFieldErrorMessage({ errors }: FormErrorMessageProps) {
   )
 }
 
-export function LoginForm() {
+interface LoginFormProps extends React.HTMLAttributes<HTMLFormElement> {}
+
+export function LoginForm({ className }: LoginFormProps) {
   const { pending } = useFormStatus()
   const router = useRouter()
   const [state, formAction] = useFormState(login, initialState)
@@ -49,7 +52,7 @@ export function LoginForm() {
   }, [state, router])
 
   return (
-    <form action={formAction}>
+    <form action={formAction} className={cn(className)}>
       <div className='flex flex-col'>
         <div className='flex flex-col space-y-8'>
           <div>
