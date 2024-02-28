@@ -33,32 +33,33 @@ export default async function TalentLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  // const token = cookies().get(env.AUTH_COOKIE_NAME)?.value
+  const token = cookies().get(env.AUTH_COOKIE_NAME)?.value
 
-  // if (!token) {
-  //   redirect('/auth/login')
-  // }
+  if (!token) {
+    redirect('/auth/login')
+  }
 
-  // async function getAuthenticatedUser(token: string) {
-  //   try {
-  //     const res = await fetch(`${env.USER_ADMIN_URL}/api/v1/auth/me`, {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //     })
-  //     return res.json()
-  //   } catch (err) {
-  //     // TODO logout user if 401 response
-  //     redirect('/error/500')
-  //   }
-  // }
+  async function getAuthenticatedUser(token: string) {
+    try {
+      const res = await fetch(`${env.BACKEND_URL}/auth/me/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      return res.json()
+    } catch (err) {
+      console.log('err =>', err)
+      // TODO logout user if 401 response
+      redirect('/error/500')
+    }
+  }
 
-  // const authData: AuthData = await getAuthenticatedUser(token)
-  // const user = authData.user
+  const authData: AuthData = await getAuthenticatedUser(token)
+  const user = authData.user
 
-  // if (!user) {
-  //   redirect('/error/500')
-  // }
+  if (!user) {
+    redirect('/error/500')
+  }
 
   return <div className='px-16 py-8'>{children}</div>
 }

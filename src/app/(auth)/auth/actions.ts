@@ -33,7 +33,7 @@ export async function login(
     }
   }
 
-  const res = await fetch(`${env.USER_ADMIN_URL}/api/v1/auth/login/`, {
+  const res = await fetch(`${env.BACKEND_URL}/auth/login/`, {
     method: 'POST',
     body: JSON.stringify(validatedFields.data),
     headers: {
