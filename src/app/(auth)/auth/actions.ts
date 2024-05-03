@@ -33,7 +33,7 @@ export async function login(
     }
   }
 
-  const res = await fetch(`${env.BACKEND_URL}/auth/login/`, {
+  const res = await fetch(`${env.SERVER_URL}/auth/login/`, {
     method: 'POST',
     body: JSON.stringify(validatedFields.data),
     headers: {
@@ -41,19 +41,21 @@ export async function login(
     },
   })
 
+  console.log('res =>', res)
+
   if (res.status === 400 || res.status === 401 || res.status === 401) {
     return { result: 'failure' }
   }
 
   const resData = await res.json()
 
-  if (!resData.access) {
+  if (!resData.token) {
     redirect('/error/500')
   }
 
   cookies().set({
     name: env.AUTH_COOKIE_NAME,
-    value: resData.access,
+    value: resData.token,
     httpOnly: true,
     path: '/',
   })
