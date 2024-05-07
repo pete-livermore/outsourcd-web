@@ -47,7 +47,7 @@ export default async function TalentLayout({
     token: string,
   ): Promise<ApiResponse<AuthUserData>> {
     try {
-      const res = await fetch(`${env.SERVER_URL}/auth/me/`, {
+      const res = await fetch(`${env.SERVER_URL}/api/v1/users/me/`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

@@ -3,7 +3,6 @@ import '@/styles/globals.css'
 import type { Metadata } from 'next'
 import { Inter as FontSans } from 'next/font/google'
 
-import { LogoAnimation } from '@/components/animation/logo-animation'
 import { cn } from '@/utils/styles'
 
 export const metadata: Metadata = {
