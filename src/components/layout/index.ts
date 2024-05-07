@@ -1,2 +1,2 @@
 export * from './container'
-export * from './sidebar'
+export * from '../../app/(auth)/talent/_components/sidebar'
