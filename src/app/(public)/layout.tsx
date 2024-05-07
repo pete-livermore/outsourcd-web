@@ -5,7 +5,7 @@ import { Inter as FontSans } from 'next/font/google'
 
 import { cn } from '@/utils/styles'
 
-import { GlobalNavigationMenu } from '../_components/global-navigation-menu'
+import { GlobalNavigationMenu } from './_components/global-navigation-menu'
 
 export const metadata: Metadata = {
   title: 'Create Next App',
