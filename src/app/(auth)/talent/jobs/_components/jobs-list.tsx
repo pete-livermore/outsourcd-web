@@ -98,11 +98,11 @@ export function JobsList({ filters }: { filters: JobFilters }) {
   }
 
   return (
-    <div className='flex grow flex-wrap gap-10'>
+    <div className='grid grid-cols-2 gap-8 lg:grid-cols-3 2xl:grid-cols-4'>
       {jobs.map((job) => (
         <Card
           key={job.id}
-          className='basis-1/6 cursor-pointer'
+          className='cursor-pointer'
           onClick={() => selectJob(job.id)}
         >
           <CardContent className='p-3'>
