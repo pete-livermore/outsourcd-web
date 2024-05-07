@@ -1,42 +1,48 @@
 'use client'
 
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import React from 'react'
+import { usePathname, useRouter } from 'next/navigation'
+import qs from 'qs'
+import React, { useEffect, useState } from 'react'
 
+import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DatePicker } from '@/components/ui/date-picker'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Slider } from '@/components/ui/slider'
-import { cn } from '@/utils/styles'
+
+interface Filters {
+  [key: string]: object | string | number | boolean
+}
 
 export function JobFilters() {
-  const searchParams = useSearchParams()
+  const [filters, setFilters] = useState<Filters>({})
   const pathname = usePathname()
   const router = useRouter()
 
-  function updateSearchParams(value: string | number | boolean, key: string) {
-    const current = new URLSearchParams(Array.from(searchParams.entries()))
-
-    if (!value) {
-      current.delete(key)
-    } else {
-      current.set(key, String(value))
-    }
-
-    const search = current.toString()
-    const query = search ? `?${search}` : ''
-
+  useEffect(() => {
+    const query = Object.keys(filters).length
+      ? `?${qs.stringify({ filters })}`
+      : ''
     router.push(`${pathname}${query}`)
-  }
-
-  // function handleSelect(event: ChangeEvent<HTMLSelectElement>) {
-  //   const value = event.target.value?.trim()
-
-  //   updateSearchParams(value)
-  // }
+  }, [router, filters, pathname])
 
   const employmentTypes = ['permanent', 'temporary', 'contract']
+  const locationTypes = ['on-site', 'remote', 'hybrid']
+
+  function filterEmploymentType(option: string, checked: string | boolean) {
+    if (checked) {
+      setFilters({ ...filters, employmentType: option })
+    }
+  }
+
+  function filterLocationType(value: string) {
+    setFilters({ ...filters, location: { type: value } })
+  }
+
+  function clearFilters() {
+    setFilters({})
+  }
 
   return (
     <div className='mb-6 flex gap-x-4 p-6'>
@@ -47,7 +53,7 @@ export function JobFilters() {
           <div className='flex' key={i}>
             <Checkbox
               id={et}
-              onCheckedChange={(checked) => updateSearchParams(checked, et)}
+              onCheckedChange={(checked) => filterEmploymentType(et, checked)}
               className='mr-2'
             />
             <div className='grid gap-1.5 leading-none'>
@@ -61,23 +67,15 @@ export function JobFilters() {
           </div>
         ))}
       </div>
-      <RadioGroup
-        defaultValue='permanent'
-        onValueChange={(value) => updateSearchParams(value, 'type')}
-      >
-        <div className='flex items-center space-x-2'>
-          <RadioGroupItem value='permanent' id='permanent' />
-          <Label htmlFor='permanent'>Permanent</Label>
-        </div>
-        <div className='flex items-center space-x-2'>
-          <RadioGroupItem value='temporary' id='temporary' />
-          <Label htmlFor='temporary'>Temporary</Label>
-        </div>
-        <div className='flex items-center space-x-2'>
-          <RadioGroupItem value='contract' id='contract' />
-          <Label htmlFor='contract'>Contract</Label>
-        </div>
+      <RadioGroup onValueChange={(value) => filterLocationType(value)}>
+        {locationTypes.map((lt) => (
+          <div key={lt} className='flex items-center space-x-2'>
+            <RadioGroupItem value={lt} id={lt} />
+            <Label htmlFor={lt}>{lt}</Label>
+          </div>
+        ))}
       </RadioGroup>
+      <Button onClick={clearFilters}>Clear filters</Button>
     </div>
   )
 }
