@@ -28,9 +28,7 @@ export default function AuthLayout({
           fontSans.variable,
         )}
       >
-        <main className='flex min-h-screen items-center justify-center px-2 py-4'>
-          {children}
-        </main>
+        <main>{children}</main>
       </body>
     </html>
   )
