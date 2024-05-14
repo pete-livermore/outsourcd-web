@@ -37,9 +37,11 @@ function FormFieldErrorMessage({ errors }: FormErrorMessageProps) {
   )
 }
 
-interface LoginFormProps extends React.HTMLAttributes<HTMLFormElement> {}
+interface LoginFormProps extends React.HTMLAttributes<HTMLFormElement> {
+  redirectUrl?: string
+}
 
-export function LoginForm({ className }: LoginFormProps) {
+export function LoginForm({ className, redirectUrl }: LoginFormProps) {
   const { pending } = useFormStatus()
   const router = useRouter()
   const [state, formAction] = useFormState(login, initialState)
@@ -47,9 +49,9 @@ export function LoginForm({ className }: LoginFormProps) {
 
   useEffect(() => {
     if (state?.result === 'success') {
-      router.push('/')
+      router.push(redirectUrl ?? '/')
     }
-  }, [state, router])
+  }, [state, router, redirectUrl])
 
   return (
     <form action={formAction} className={cn(className)}>
