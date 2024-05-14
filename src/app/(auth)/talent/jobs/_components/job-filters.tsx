@@ -1,8 +1,7 @@
 'use client'
 
-import { usePathname, useRouter } from 'next/navigation'
-import qs from 'qs'
-import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import React, { startTransition, useCallback, useEffect, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -17,15 +16,29 @@ interface Filters {
 
 export function JobFilters() {
   const [filters, setFilters] = useState<Filters>({})
-  const pathname = usePathname()
   const router = useRouter()
 
+  const setFiltersCookie = useCallback(
+    async (data: Filters) => {
+      const filtersCookie = { name: 'filters', data }
+      await fetch('/api/cookies/set', {
+        method: 'POST',
+        body: JSON.stringify(filtersCookie),
+      })
+      startTransition(() => {
+        // Refresh the current route and fetch new data from the server without
+        // losing client-side browser or React state.
+        router.refresh()
+      })
+    },
+    [router],
+  )
+
   useEffect(() => {
-    const query = Object.keys(filters).length
-      ? `?${qs.stringify({ filters })}`
-      : ''
-    router.push(`${pathname}${query}`)
-  }, [router, filters, pathname])
+    if (Object.keys(filters).length) {
+      setFiltersCookie(filters)
+    }
+  }, [filters, setFiltersCookie])
 
   const employmentTypes = ['permanent', 'temporary', 'contract']
   const locationTypes = ['on-site', 'remote', 'hybrid']
@@ -41,7 +54,9 @@ export function JobFilters() {
   }
 
   function clearFilters() {
-    setFilters({})
+    const clearedFilters = {}
+    setFilters(clearedFilters)
+    setFiltersCookie(clearedFilters)
   }
 
   return (
