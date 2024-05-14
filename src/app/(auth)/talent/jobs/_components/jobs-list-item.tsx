@@ -1,11 +1,11 @@
 'use client'
-import { useState } from 'react'
 
 import { CardHeader } from '@/components/ui/card'
 import { CardDescription } from '@/components/ui/card'
 import { CardTitle } from '@/components/ui/card'
 import { CardContent } from '@/components/ui/card'
 import { Card } from '@/components/ui/card'
+import { useQuery } from '@/hooks/query/use-query'
 
 import { CompanyInfo } from '.'
 
@@ -25,10 +25,10 @@ export function JobsListItem({
   description,
   company,
 }: JobsListItemProps) {
-  const state = useState(null)
+  const { set } = useQuery()
+
   function handleJobClick() {
-    console.log(state)
-    // router.push(pathname + '?' + createQueryString('job', String(jobId)))
+    set('detail', id)
   }
 
   return (
