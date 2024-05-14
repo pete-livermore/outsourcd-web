@@ -1,12 +1,12 @@
 import { cookies } from 'next/headers'
-import { redirect } from 'next/navigation'
-import qs from 'querystring'
 
+import { DialogContent } from '@/components/ui/dialog'
 import { Heading } from '@/components/ui/heading'
-import { env } from '@/config/env'
 
 import { JobDetail, JobsList } from './_components'
+import { DialogProvider } from './_components/dialog-provider'
 import { JobFilters } from './_components/job-filters'
+import { getJobs } from './loaders'
 
 export interface Job {
   id: number
@@ -21,34 +21,26 @@ export interface Job {
 export default async function JobsPage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined }
+  searchParams: { detail: string | undefined }
 }) {
-  const token = cookies().get(env.AUTH_COOKIE_NAME)?.value
-
-  if (!token) {
-    return redirect('/auth/login')
-  }
-
-  const baseUrl = `${env.SERVER_URL}/api/v1/jobs`
-  const query = `?populate[company]=true` + `&${qs.stringify(searchParams)}`
-  const url = `${baseUrl}${query}`
-
-  const jobsResponse = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  })
-
-  const jobsResponseData = await jobsResponse.json()
-  const jobs: Job[] = jobsResponseData.data
+  const filtersCookie = cookies().get('filters')
+  const filters = filtersCookie ? JSON.parse(filtersCookie.value) : {}
+  const jobs = await getJobs({ populate: { company: true }, filters })
+  const selectedJobId = searchParams.detail
+    ? parseInt(searchParams.detail)
+    : null
 
   return (
     <div>
       <Heading>Jobs</Heading>
       <JobFilters />
       <div>
-        {/* <JobDetail className={cn(job ? 'flex-none basis-2/5' : 'hidden')} /> */}
-        <JobsList jobs={jobs} />
+        <DialogProvider>
+          <DialogContent className='sm:w-5/6'>
+            {selectedJobId && <JobDetail id={selectedJobId} />}
+          </DialogContent>
+          <JobsList jobs={jobs} />
+        </DialogProvider>
       </div>
     </div>
   )
