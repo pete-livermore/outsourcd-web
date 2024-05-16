@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { cookies } from 'next/headers'
+import { cookies, headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -39,10 +39,15 @@ export default async function TalentLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const headersList = headers()
+  const pathname = headersList.get('x-pathname')
+  const query = pathname ? `?redirect=${encodeURIComponent(pathname)}` : ''
+  const redirectUrl = '/auth/login' + query
+
   const token = cookies().get(env.AUTH_COOKIE_NAME)?.value
 
   if (!token) {
-    return redirect('/auth/login')
+    return redirect(redirectUrl)
   }
 
   async function getAuthenticatedUser(
@@ -55,7 +60,7 @@ export default async function TalentLayout({
     })
 
     if (res.status === 401) {
-      return redirect('http://localhost:3000/auth/login')
+      return redirect(redirectUrl)
     }
 
     return res.json()
