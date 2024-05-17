@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { cookies, headers } from 'next/headers'
+import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -102,6 +103,9 @@ export default async function TalentLayout({
         <div className='min-h-screen flex-none basis-96 bg-foreground px-2 py-12'>
           <div className='flex flex-col items-center text-primary-foreground'>
             <CompanyLogo className='mb-6' />
+            <Link href='/talent/profile' className='text-muted-foreground'>
+              Profile
+            </Link>
           </div>
         </div>
         <div className='grow px-8 py-6'>{children}</div>
