@@ -41,7 +41,7 @@ export async function login(
     },
   })
 
-  if (res.status === 400 || res.status === 401 || res.status === 401) {
+  if (!res.ok) {
     return { result: 'failure' }
   }
 
