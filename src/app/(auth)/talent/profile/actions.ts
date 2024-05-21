@@ -1,47 +1,109 @@
 'use server'
 
+import * as changeCase from 'change-case'
+import { fileTypeFromBlob } from 'file-type'
 import { z } from 'zod'
 
 import { env } from '@/config/env'
+import { getAuthToken } from '@/lib/auth/token'
 
-import { AdditionalData, ProfileFormState } from './_components/profile-form'
+import { getAuthenticatedUser } from '../../auth/loaders'
+import { ProfileFormState } from './_components/profile-form'
 
-const userUpdateSchema = z.object({
+async function uploadUserProfileImage(blob: Blob, userId: number) {
+  const token = getAuthToken()
+  const fileName = `profile_image_${userId}`
+  const fileType = await fileTypeFromBlob(blob)
+  const fileExt = fileType?.ext
+  const fileOriginalName = fileName + '.' + fileExt
+
+  const newForm = new FormData()
+  newForm.append('file', blob, fileOriginalName)
+  newForm.append('provider', 'cloudinary')
+  newForm.append('name', fileName)
+
+  const res = await fetch(`${env.SERVER_URL}/api/v1/uploads/file`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    method: 'post',
+    body: newForm,
+  })
+
+  if (!res.ok) {
+    console.log(`image ${fileName} not uploaded: ${res.status}`)
+  }
+
+  const resBody = await res.json()
+  return resBody.data
+}
+
+const updateUserSchema = z.object({
   // email: z.string({
   //   invalid_type_error: 'Invalid Email',
   // }),
-  biography: z.string().min(1),
+  firstName: z.string().nullable(),
+  lastName: z.string().nullable(),
+  biography: z.string().nullable(),
+  profileImage: z.number().gte(1).optional(),
 })
 
+interface RawFormData {
+  biography: FormDataEntryValue | null
+  firstName: FormDataEntryValue | null
+  lastName: FormDataEntryValue | null
+  profileImage?: number
+}
+
 export async function updateUser(
-  additionalData: AdditionalData,
+  additionalFormData: FormData,
+  prevState: ProfileFormState,
   formData: FormData,
 ): Promise<ProfileFormState> {
-  const { selectedEmail } = additionalData
-  console.log('selectedEmail =>', selectedEmail)
+  const token = getAuthToken()
+  const user = await getAuthenticatedUser()
 
-  const userId = 6
-
-  const rawFormData = {
-    biography: formData.get('biography'),
+  if (!user) {
+    return { result: 'failure' }
   }
 
-  console.log('formData =>', rawFormData)
+  const profileImage = additionalFormData.get('profileImage') as Blob
 
-  const validatedFields = userUpdateSchema.safeParse(rawFormData)
+  const rawFormData: RawFormData = {
+    biography: formData.get('biography'),
+    firstName: formData.get('first-name'),
+    lastName: formData.get('last-name'),
+  }
 
-  // Return early if the form data is invalid
+  if (profileImage) {
+    const newImage = await uploadUserProfileImage(profileImage, user.id)
+    rawFormData.profileImage = newImage.id
+  }
+
+  const validatedFields = updateUserSchema.safeParse(rawFormData)
+
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
     }
   }
 
-  const res = await fetch(`${env.SERVER_URL}/v1/users/${userId}`, {
-    method: 'POST',
-    body: JSON.stringify(validatedFields.data),
+  // eslint-disable-next-line
+  const updateUserDto: Record<string, any> = {}
+
+  for (const [key, value] of Object.entries(rawFormData)) {
+    if (value !== undefined && value !== null && value !== '') {
+      const snakeCaseKey = changeCase.snakeCase(key)
+      updateUserDto[snakeCaseKey] = value
+    }
+  }
+
+  const res = await fetch(`${env.SERVER_URL}/api/v1/users/${user.id}`, {
+    method: 'PUT',
+    body: JSON.stringify(updateUserDto),
     headers: {
       'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
     },
   })
 
