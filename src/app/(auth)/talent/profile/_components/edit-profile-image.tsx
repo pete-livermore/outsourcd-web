@@ -10,14 +10,13 @@ import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Slider } from '@/components/ui/slider'
-import { generateCroppedImage } from '@/lib/images/crop'
+import { generateCroppedImage, ImageCrop } from '@/lib/images/crop'
 
 interface EditProfileImageProps {
   onEditComplete: (blob: Blob) => any
 }
 
 export function EditProfileImage({ onEditComplete }: EditProfileImageProps) {
-  // const [isCropping, setIsCropping] = useState(true)
   const [uncroppedImage, setUncroppedImage] = useState<
     File & { preview: string }
   >()
@@ -27,6 +26,7 @@ export function EditProfileImage({ onEditComplete }: EditProfileImageProps) {
 
   function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
     const files = e.currentTarget.files
+
     if (files) {
       const file = files[0]
       const newFile = Object.assign(file, {
@@ -36,7 +36,10 @@ export function EditProfileImage({ onEditComplete }: EditProfileImageProps) {
     }
   }
 
-  async function handleCropComplete(croppedArea, croppedAreaPixels) {
+  async function handleCropComplete(
+    _croppedArea: ImageCrop,
+    croppedAreaPixels: ImageCrop,
+  ) {
     if (uncroppedImage?.preview) {
       const croppedImageBlob = await generateCroppedImage(
         uncroppedImage.preview,
@@ -82,7 +85,6 @@ export function EditProfileImage({ onEditComplete }: EditProfileImageProps) {
               </div>
               <Slider
                 className='cursor-pointer'
-                // value={[zoom]}
                 step={0.1}
                 min={1}
                 max={3}
