@@ -44,8 +44,8 @@ export default async function TalentLayout({
   }
 
   const resData = await res.json()
-  const { firstName, lastName } = resData.data
-  const userInitials = firstName[0].toUpperCase() + lastName[0].toUpperCase()
+  const { first_name, last_name } = resData.data
+  const userInitials = first_name[0].toUpperCase() + last_name[0].toUpperCase()
 
   return (
     <div>
@@ -70,7 +70,7 @@ export default async function TalentLayout({
         </DropdownMenu>
       </div>
       <div className='flex w-full'>
-        <div className='min-h-screen flex-none basis-96 bg-foreground px-2 py-12'>
+        <div className='min-h-screen flex-none basis-72 bg-foreground px-2 py-12'>
           <div className='flex flex-col items-center text-primary-foreground'>
             <CompanyLogo className='mb-6' />
             <Link href='/talent/profile' className='text-muted-foreground'>
