@@ -10,8 +10,8 @@ export interface HeadingProps
 const headingVariants = cva([], {
   variants: {
     variant: {
-      h1: 'my-7 font-bold text-4xl sm:mb-4 md:mt-4',
-      h2: 'my-6 font-semibold text-2xl sm:mb-3 md:mt-3',
+      h1: 'my-7 text-4xl font-bold sm:mb-4 md:mt-4',
+      h2: 'my-6 text-2xl font-semibold sm:mb-3 md:mt-3',
       h3: 'my-7 text-xl sm:mb-3 md:mt-3',
       h4: 'my-7 text-lg sm:mb-3 md:mt-3',
     },

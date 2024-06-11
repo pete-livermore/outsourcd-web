@@ -33,7 +33,7 @@ export async function login(
     }
   }
 
-  const res = await fetch(`${env.SERVER_URL}/v1/auth/login/`, {
+  const res = await fetch(`${env.SERVER_URL}/v1/auth/login`, {
     method: 'POST',
     body: JSON.stringify(validatedFields.data),
     headers: {
@@ -41,7 +41,7 @@ export async function login(
     },
   })
 
-  if (res.status === 400 || res.status === 401 || res.status === 401) {
+  if (!res.ok) {
     return { result: 'failure' }
   }
 

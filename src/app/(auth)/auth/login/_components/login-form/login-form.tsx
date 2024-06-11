@@ -5,8 +5,10 @@ import { useEffect } from 'react'
 import { useFormState, useFormStatus } from 'react-dom'
 
 import { login } from '@/app/(auth)/auth/actions'
+import { FormFieldErrorMessage } from '@/components/form/error/form-field-error-message'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { Spinner } from '@/components/ui/spinner'
 import { cn } from '@/utils/styles'
 
@@ -19,22 +21,6 @@ export type LoginFormState =
 
 const initialState: LoginFormState = {
   errors: { password: [], email: [] },
-}
-
-interface FormErrorMessageProps {
-  errors?: string[]
-}
-
-function FormFieldErrorMessage({ errors }: FormErrorMessageProps) {
-  if (!errors?.length) {
-    return null
-  }
-
-  return (
-    <p aria-live='polite' className='mt-1.5 text-sm text-red-600'>
-      {errors?.length ? errors[0] : null}
-    </p>
-  )
 }
 
 interface LoginFormProps extends React.HTMLAttributes<HTMLFormElement> {
@@ -58,9 +44,9 @@ export function LoginForm({ className, redirectUrl }: LoginFormProps) {
       <div className='flex flex-col'>
         <div className='flex flex-col space-y-8'>
           <div>
-            <label htmlFor='email' className='sr-only'>
+            <Label htmlFor='email' className='sr-only'>
               Email address
-            </label>
+            </Label>
             <Input
               id='email'
               required
@@ -72,9 +58,9 @@ export function LoginForm({ className, redirectUrl }: LoginFormProps) {
             <FormFieldErrorMessage errors={errors?.email} />
           </div>
           <div>
-            <label htmlFor='password' className='sr-only'>
+            <Label htmlFor='password' className='sr-only'>
               Password
-            </label>
+            </Label>
             <Input
               id='password'
               name='password'
