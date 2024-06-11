@@ -3,7 +3,6 @@ function createImage(url: string): Promise<HTMLImageElement> {
     const image = new Image()
     image.addEventListener('load', () => resolve(image))
     image.addEventListener('error', (error) => reject(error))
-    // image.setAttribute('crossOrigin', 'anonymous') // needed to avoid cross-origin issues on CodeSandbox
     image.src = url
   })
 }
@@ -12,14 +11,14 @@ function getRadianAngle(degreeValue: number) {
   return (degreeValue * Math.PI) / 180
 }
 
-interface ImageCrop {
+export interface ImageCrop {
   width: number
   height: number
   x: number
   y: number
 }
 
-export default async function getCroppedImg(
+async function getCroppedCanvas(
   imageSrc: string,
   pixelCrop: ImageCrop,
   rotation = 0,
@@ -65,8 +64,6 @@ export default async function getCroppedImg(
     0 - safeArea / 2 + image.height * 0.5 - pixelCrop.y,
   )
 
-  // As Base64 string
-  // return canvas.toDataURL("image/jpeg");
   return canvas
 }
 
@@ -78,7 +75,7 @@ export const generateCroppedImage = async (
     return
   }
 
-  const canvas = await getCroppedImg(imageSrc, crop)
+  const canvas = await getCroppedCanvas(imageSrc, crop)
 
   const croppedImage: Blob | null = await new Promise((resolve) =>
     canvas.toBlob(resolve, 'image/jpeg'),
