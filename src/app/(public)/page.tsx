@@ -1,3 +1,11 @@
+import { Hero } from './_components/hero'
+
 export default function HomePage() {
-  return <div>Home</div>
+  return (
+    <div className=''>
+      <section className='py-6'>
+        <Hero />
+      </section>
+    </div>
+  )
 }
