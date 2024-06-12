@@ -5,19 +5,23 @@ import { cn } from '@/utils/styles'
 
 export interface HeadingProps
   extends React.HTMLAttributes<HTMLHeadingElement>,
-    VariantProps<typeof headingVariants> {}
+    VariantProps<typeof headingVariants> {
+  level: 1 | 2 | 3 | 4
+}
 
 const headingVariants = cva([], {
   variants: {
-    variant: {
-      h1: 'my-7 text-4xl font-bold sm:mb-4 md:mt-4',
-      h2: 'my-6 text-2xl font-semibold sm:mb-3 md:mt-3',
-      h3: 'my-7 text-xl sm:mb-3 md:mt-3',
-      h4: 'my-7 text-lg sm:mb-3 md:mt-3',
+    size: {
+      xxl: 'my-8 text-6xl font-bold sm:mb-4 md:mt-4',
+      xl: 'my-2 text-4xl font-bold sm:mb-4 md:mt-4',
+      lg: 'my-6 text-2xl font-semibold sm:mb-3 md:mt-3',
+      md: 'my-7 text-xl sm:mb-3 md:mt-3',
+      sm: 'my-7 text-lg sm:mb-3 md:mt-3',
     },
     textColor: {
       primary: 'text-primary',
       grey: 'text-gray-600',
+      white: 'text-white',
     },
     justification: {
       center: 'text-center',
@@ -25,7 +29,7 @@ const headingVariants = cva([], {
     },
   },
   defaultVariants: {
-    variant: 'h1',
+    size: 'lg',
     textColor: 'primary',
     justification: 'center',
   },
@@ -33,31 +37,41 @@ const headingVariants = cva([], {
 
 export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>(
   (
-    { className, justification, variant = 'h1', textColor, children, ...props },
+    {
+      className,
+      justification,
+      level = 'h1',
+      size = 'lg',
+      textColor,
+      children,
+      ...props
+    },
     ref,
   ) => {
     const classes = cn(
-      headingVariants({ variant, textColor, justification, className }),
+      headingVariants({ size, textColor, justification, className }),
     )
 
-    switch (variant) {
-      case 'h1': {
+    const elementProps = { className: classes, ...props }
+
+    switch (level) {
+      case 1: {
         return (
-          <h1 className={classes} {...props} ref={ref}>
+          <h1 {...elementProps} ref={ref}>
             {children}
           </h1>
         )
       }
-      case 'h2': {
+      case 2: {
         return (
-          <h2 className={classes} {...props} ref={ref}>
+          <h2 {...elementProps} ref={ref}>
             {children}
           </h2>
         )
       }
-      case 'h3': {
+      case 3: {
         return (
-          <h3 className={classes} {...props} ref={ref}>
+          <h3 {...elementProps} ref={ref}>
             {children}
           </h3>
         )
