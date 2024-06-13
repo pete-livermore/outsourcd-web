@@ -33,12 +33,15 @@ npm install
 yarn install
 ```
 
-3. Set up environment variables:
-   Create a .env file in the root directory and add the following variables:
+3. Set up environment variables:<br>
+Create a .env file in the root directory and add the following variables:
 
 ```bash
   SERVER_URL=your_backend_server_url
 ```
+
+4. Clone the server repo and run:<br>
+Access the repo and setup guidance [here](https://github.com/pete-livermore/outsourcd-app).
 
 ## Running the Application
 
