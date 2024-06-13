@@ -4,10 +4,16 @@ const envSchema = z.object({
   AUTH_COOKIE_NAME: z.string(),
   DOMAIN: z.string(),
   SERVER_URL: z.string().url(),
+  CLOUDINARY_CLOUD_NAME: z.string(),
+  CLOUDINARY_API_KEY: z.string(),
+  CLOUDINARY_API_SECRET: z.string(),
 })
 
 export const env = envSchema.parse({
   AUTH_COOKIE_NAME: process.env.AUTH_COOKIE_NAME || '_auth',
   DOMAIN: process.env.DOMAIN || 'localhost',
   SERVER_URL: process.env.SERVER_URL,
+  CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
+  CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
+  CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
 })
