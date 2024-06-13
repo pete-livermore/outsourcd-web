@@ -1,7 +1,7 @@
 # Outsourcd
 
 Outsourcd is a web application that allows users to search, view, and apply for jobs.
-This repo contains the code for the frontend of the application. Built using NextJS, it allows users to view their profile, view job listings, and apply for jobs.
+This repo contains the code for the frontend of the application. Built using NextJS, it allows users to view their profile, view job listings, and apply for jobs. Backend code can be found [here](https://github.com/pete-livermore/outsourcd-app).
 
 ## Tech
 
