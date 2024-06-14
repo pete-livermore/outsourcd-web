@@ -2,15 +2,11 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import qs from 'qs'
 
-import { DialogContent } from '@/components/ui/dialog'
-import { Heading } from '@/components/ui/heading'
 import { env } from '@/config/env'
 import { buildRedirectUrl } from '@/lib/auth/redirect-url'
 import { getAuthToken } from '@/lib/auth/token'
 
-import { JobDetail, JobsList } from './_components'
-import { DialogProvider } from './_components/dialog-provider'
-import { JobFilters } from './_components/job-filters'
+import { JobsPanel } from './_components'
 
 export interface Job {
   id: number
@@ -20,6 +16,12 @@ export interface Job {
     id: number
     name: string
   }
+  salary: {
+    currency: string
+    value: { max: number; min: number }
+    period: string
+  }
+  start_date: string
 }
 
 export default async function JobsPage({
@@ -51,24 +53,16 @@ export default async function JobsPage({
     redirect('/error/500')
   }
 
-  const jobsResBody = await jobsRes.json()
-  const jobs = jobsResBody.data
+  const { data: jobs } = await jobsRes.json()
   const selectedJobId = searchParams.detail
     ? parseInt(searchParams.detail)
     : null
 
+  console.log('jobs.length =>', jobs.length)
+
   return (
     <div>
-      <Heading>Jobs</Heading>
-      <JobFilters />
-      <div>
-        <DialogProvider>
-          <DialogContent className='sm:w-5/6'>
-            {selectedJobId && <JobDetail id={selectedJobId} />}
-          </DialogContent>
-          <JobsList jobs={jobs} />
-        </DialogProvider>
-      </div>
+      <JobsPanel jobs={jobs} selectedJobId={selectedJobId} />
     </div>
   )
 }
