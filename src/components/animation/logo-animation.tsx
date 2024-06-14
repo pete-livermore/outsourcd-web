@@ -1,9 +1,8 @@
 'use client'
 import Lottie from 'lottie-react'
+import lottieJson from 'public/assets/animations/managers-to-coaches.json'
 
 import { cn } from '@/utils/styles'
-
-import lottieJson from 'public/assets/animations/managers-to-coaches.json'
 
 interface ILogoAnimationProps {
   className?: string
