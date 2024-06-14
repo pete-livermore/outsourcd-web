@@ -1,10 +1,11 @@
 'use client'
+import { format } from 'date-fns'
 import { Banknote, Calendar } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Spinner } from '@/components/ui/spinner'
 
 import { Job } from '../page'
@@ -16,6 +17,11 @@ interface JobDetailProps {
 
 interface ApiError {
   message: string
+}
+
+const salaryPeriods: { [key: string]: string } = {
+  mo: 'month',
+  yr: 'year',
 }
 
 export function JobDetail({ id }: JobDetailProps) {
@@ -43,17 +49,27 @@ export function JobDetail({ id }: JobDetailProps) {
   }, [id])
 
   if (isLoading) {
-    return <Spinner />
+    return (
+      <div className='flex items-center justify-center'>
+        <Spinner />
+      </div>
+    )
   }
 
   if (!job) {
     return null
   }
 
-  const { title, company, description } = job
+  const { title, company, description, salary, start_date } = job
+  const salaryPeriod = salaryPeriods[salary.period]
+  const salaryRange = `${salary.value.min} - ${salary.value.max}`
+  const salaryText = `${salaryRange} ${salary.currency} per ${salaryPeriod}`
+  const startDate = format(start_date, 'io MMM yy')
+
+  console.log('job', job)
 
   return (
-    <Card>
+    <div>
       <CardHeader>
         <CompanyInfo name={company.name} />
         <div className='space-y-4'>
@@ -61,11 +77,11 @@ export function JobDetail({ id }: JobDetailProps) {
           <div className='mt-4 flex items-center gap-x-4'>
             <div className='flex items-center gap-x-1 text-xs'>
               <Calendar />
-              <p>25th June 2024</p>
+              <p>{startDate}</p>
             </div>
             <div className='flex items-center gap-x-1 text-xs'>
               <Banknote />
-              <p>35 K</p>
+              <p>{salaryText}</p>
             </div>
           </div>
           <div className='flex'>
@@ -77,6 +93,6 @@ export function JobDetail({ id }: JobDetailProps) {
         <p className='py-4'>{description}</p>
         <Button variant='default'>Apply</Button>
       </CardContent>
-    </Card>
+    </div>
   )
 }
