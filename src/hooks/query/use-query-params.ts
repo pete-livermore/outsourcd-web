@@ -1,7 +1,7 @@
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useCallback } from 'react'
 
-export function useQuery() {
+export function useQueryParams() {
   const pathname = usePathname()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -21,7 +21,7 @@ export function useQuery() {
   }
 
   function clear() {
-    router.push(pathname)
+    router.push(pathname, { scroll: false })
   }
 
   return { set, clear }

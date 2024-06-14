@@ -5,7 +5,7 @@ import { CardDescription } from '@/components/ui/card'
 import { CardTitle } from '@/components/ui/card'
 import { CardContent } from '@/components/ui/card'
 import { Card } from '@/components/ui/card'
-import { useQuery } from '@/hooks/query/use-query'
+import { useQueryParams } from '@/hooks/query/use-query-params'
 
 import { CompanyInfo } from '.'
 
@@ -25,20 +25,20 @@ export function JobsListItem({
   description,
   company,
 }: JobsListItemProps) {
-  const { set } = useQuery()
+  const { set } = useQueryParams()
 
   function handleJobClick() {
     set('detail', id)
   }
 
   return (
-    <Card key={id} className='cursor-pointer' onClick={handleJobClick}>
+    <Card key={id} className='h-full cursor-pointer' onClick={handleJobClick}>
       <CardContent className='p-3'>
         <CompanyInfo name={company.name} />
       </CardContent>
       <CardHeader>
         <CardTitle>{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
+        <CardDescription className='truncate'>{description}</CardDescription>
       </CardHeader>
     </Card>
   )
