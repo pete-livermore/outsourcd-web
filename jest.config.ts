@@ -12,12 +12,12 @@ const createJestConfig = nextJest({
 
 const config: Config = {
   clearMocks: true,
-  coverageProvider: 'v8',
   moduleNameMapper: {
     '^@/components(.*)$': '<rootDir>/src/components$1',
     '^@/config(.*)$': '<rootDir>/src/config$1',
   },
   preset: 'ts-jest',
+  testEnvironment: 'jsdom',
 }
 
 export default createJestConfig(config)
