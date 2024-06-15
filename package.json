@@ -9,6 +9,7 @@
     "lint": "next lint",
     "storybook": "storybook dev -p 6006",
     "test": "jest",
+    "test:e2e": "cypress open",
     "build-storybook": "storybook build",
     "prepare": "husky"
   },
@@ -73,6 +74,7 @@
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
     "autoprefixer": "^10.0.1",
+    "cypress": "^13.11.0",
     "eslint": "^8.56.0",
     "eslint-config-next": "^14.1.0",
     "eslint-config-prettier": "^9.1.0",
