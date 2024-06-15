@@ -39,14 +39,7 @@ const headingVariants = cva([], {
 
 export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>(
   (
-    {
-      className,
-      justification,
-      level = 'h1',
-      size = 'lg',
-      textColor,
-      ...props
-    },
+    { className, justification, level = 1, size = 'lg', textColor, ...props },
     ref,
   ) => {
     const classes = cn(
@@ -66,7 +59,7 @@ export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>(
         return <h3 ref={ref} {...elementProps}></h3>
       }
       default:
-        return null
+        throw new Error('Heading requires level')
     }
   },
 )
