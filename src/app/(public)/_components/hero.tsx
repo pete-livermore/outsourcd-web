@@ -17,7 +17,7 @@ export async function Hero() {
   const { base64 } = await getPlaiceholder(buffer)
 
   return (
-    <div className='relative h-[500px] w-full'>
+    <div className='relative h-[500px] w-full' data-testId='homepage-hero'>
       <Image
         src={imageUrl}
         alt={HERO_IMAGE_ALT_TEXT}
