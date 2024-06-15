@@ -13,7 +13,7 @@ import { Slider } from '@/components/ui/slider'
 import { generateCroppedImage, ImageCrop } from '@/lib/images/crop'
 
 interface EditProfileImageProps {
-  onEditComplete: (blob: Blob) => any
+  onEditComplete: (blob: Blob) => void
 }
 
 export function EditProfileImage({ onEditComplete }: EditProfileImageProps) {
