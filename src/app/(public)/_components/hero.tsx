@@ -4,13 +4,14 @@ import { getPlaiceholder } from 'plaiceholder'
 
 import { buttonVariants } from '@/components/ui/button'
 import { Heading } from '@/components/ui/heading'
-import { getImgUrl } from '@/lib/images/get-url'
 
-const HERO_IMAGE_PUBLIC_ID = 'coffee-desktop_axim86'
+// const HERO_IMAGE_PUBLIC_ID = 'coffee-desktop_axim86'
 const HERO_IMAGE_ALT_TEXT = 'working in a coffee shop'
 
 export async function Hero() {
-  const imageUrl = getImgUrl(HERO_IMAGE_PUBLIC_ID)
+  const imageUrl =
+    'https://res.cloudinary.com/di7ndofao/image/upload/v1718169624/outsourcd/coffee-desktop_axim86.jpg'
+  // getImgUrl(HERO_IMAGE_PUBLIC_ID)
   const buffer = await fetch(imageUrl).then(async (res) =>
     Buffer.from(await res.arrayBuffer()),
   )
