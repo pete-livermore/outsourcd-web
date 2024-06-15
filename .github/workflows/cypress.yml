@@ -6,12 +6,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Start Next.js server
-        run: npm run start
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+        with:
+          build: npm run build
+          start: npm start
         env:
           CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
           CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
@@ -19,9 +18,3 @@ jobs:
           CLOUDINARY_FOLDER_NAME: ${{ secrets.CLOUDINARY_FOLDER_NAME }}
           NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_FOLDER_NAME}}
           SERVER_URL: ${{ vars.SERVER_URL }}
-
-      - name: Wait for server to be ready
-        run: npx wait-on http://localhost:3000
-
-      - name: Cypress run
-        uses: cypress-io/github-action@v6
