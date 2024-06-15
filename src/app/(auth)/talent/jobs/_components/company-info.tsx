@@ -1,6 +1,6 @@
 'use client'
 
-import { CldImage } from 'next-cloudinary'
+import CldImage from '@/components/ui/image/cld-image'
 
 export function CompanyInfo({ name }: { name: string }) {
   return (
