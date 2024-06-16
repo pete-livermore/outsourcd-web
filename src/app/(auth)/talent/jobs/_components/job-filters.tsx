@@ -49,7 +49,7 @@ export function JobFilters() {
     }
   }
 
-  function filterLocationType(value: string) {
+  function handleLocationTypeValueChange(value: string) {
     setFilters({ ...filters, location: { type: value } })
   }
 
@@ -82,7 +82,7 @@ export function JobFilters() {
           </div>
         ))}
       </div>
-      <RadioGroup onValueChange={(value) => filterLocationType(value)}>
+      <RadioGroup onValueChange={handleLocationTypeValueChange}>
         {locationTypes.map((lt) => (
           <div key={lt} className='flex items-center space-x-2'>
             <RadioGroupItem value={lt} id={lt} />
