@@ -58,8 +58,6 @@ export default async function JobsPage({
     ? parseInt(searchParams.detail)
     : null
 
-  console.log('jobs.length =>', jobs.length)
-
   return (
     <div>
       <JobsPanel jobs={jobs} selectedJobId={selectedJobId} />
