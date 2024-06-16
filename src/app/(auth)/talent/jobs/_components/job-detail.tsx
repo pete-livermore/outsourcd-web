@@ -66,8 +66,6 @@ export function JobDetail({ id }: JobDetailProps) {
   const salaryText = `${salaryRange} ${salary.currency} per ${salaryPeriod}`
   const startDate = format(start_date, 'io MMM yy')
 
-  console.log('job', job)
-
   return (
     <div>
       <CardHeader>
