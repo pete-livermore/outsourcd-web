@@ -2,7 +2,7 @@
 import qs from 'qs'
 
 import { env } from '@/config/env'
-import { getAuthToken } from '@/lib/auth/token'
+import { get } from '@/lib/api/get'
 
 import { Job } from './page'
 
@@ -12,21 +12,22 @@ type PopulateParams =
     }
   | Record<string, never>
 
-export async function getJob(
-  id: number,
-  populate: PopulateParams = {},
-): Promise<Job> {
-  const token = getAuthToken()
-  const baseUrl = `${env.SERVER_URL}/api/v1/jobs/${id}`
+const baseJobsUrl = `${env.SERVER_URL}/api/v1/jobs`
+
+export async function getJob(id: number, populate: PopulateParams = {}) {
+  const baseUrl = `${baseJobsUrl}/${id}`
   const query = populate ? `?${qs.stringify({ populate })}` : ''
   const url = `${baseUrl}${query}`
+  return await get<Job>(url)
+}
 
-  const jobRes = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  })
+interface GetJobsParams {
+  filters?: Record<string, any>
+  populate?: PopulateParams
+}
 
-  const jobResBody = await jobRes.json()
-  return jobResBody.data
+export async function getJobs({ filters, populate }: GetJobsParams) {
+  const query = qs.stringify({ filters, populate })
+  const url = `${baseJobsUrl}?${query}`
+  return await get<Job[]>(url)
 }

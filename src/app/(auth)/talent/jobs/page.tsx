@@ -1,12 +1,11 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
-import qs from 'qs'
 
-import { env } from '@/config/env'
+import { ResultType } from '@/enums/result-type'
 import { buildRedirectUrl } from '@/lib/auth/redirect-url'
-import { getAuthToken } from '@/lib/auth/token'
 
 import { JobsPanel } from './_components'
+import { getJobs } from './loaders'
 
 export interface Job {
   id: number
@@ -30,30 +29,20 @@ export default async function JobsPage({
   searchParams: { detail: string | undefined }
 }) {
   const redirectUrl = buildRedirectUrl()
-  const token = getAuthToken()
-
   const filtersCookie = cookies().get('filters')
   const filters = filtersCookie ? JSON.parse(filtersCookie.value) : {}
 
-  const baseUrl = `${env.SERVER_URL}/api/v1/jobs`
-  const populate = { company: true }
-  const query = qs.stringify({ filters, populate })
-  const url = `${baseUrl}?${query}`
+  const jobsResult = await getJobs({ filters, populate: { company: true } })
 
-  const jobsRes = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  })
-
-  if (!jobsRes.ok) {
-    if (jobsRes.status === 401) {
+  if (jobsResult.type === ResultType.FAILURE) {
+    if (jobsResult.reason === 'auth') {
       redirect(redirectUrl)
+    } else {
+      redirect('/error/500')
     }
-    redirect('/error/500')
   }
 
-  const { data: jobs } = await jobsRes.json()
+  const { data: jobs } = jobsResult
   const selectedJobId = searchParams.detail
     ? parseInt(searchParams.detail)
     : null
