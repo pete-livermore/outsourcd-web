@@ -1,10 +1,23 @@
-'use server'
 import qs from 'qs'
 
 import { env } from '@/config/env'
 import { get } from '@/lib/api/get'
 
-import { Job } from './page'
+export interface Job {
+  id: number
+  title: string
+  description: string
+  company: {
+    id: number
+    name: string
+  }
+  salary: {
+    currency: string
+    value: { max: number; min: number }
+    period: string
+  }
+  start_date: string
+}
 
 type PopulateParams =
   | {
@@ -22,7 +35,7 @@ export async function getJob(id: number, populate: PopulateParams = {}) {
 }
 
 interface GetJobsParams {
-  filters?: Record<string, any>
+  filters?: object
   populate?: PopulateParams
 }
 

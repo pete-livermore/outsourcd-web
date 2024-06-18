@@ -3,25 +3,9 @@ import { redirect } from 'next/navigation'
 
 import { ResultType } from '@/enums/result-type'
 import { buildRedirectUrl } from '@/lib/auth/redirect-url'
+import { getJobs } from '@/lib/jobs/jobs'
 
 import { JobsPanel } from './_components'
-import { getJobs } from './loaders'
-
-export interface Job {
-  id: number
-  title: string
-  description: string
-  company: {
-    id: number
-    name: string
-  }
-  salary: {
-    currency: string
-    value: { max: number; min: number }
-    period: string
-  }
-  start_date: string
-}
 
 export default async function JobsPage({
   searchParams,
