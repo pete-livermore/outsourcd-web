@@ -28,7 +28,7 @@ export default async function ProfilePage() {
   return (
     <div>
       <div className='mb-2'>
-        <Heading level={1} size='lg' justification='left'>
+        <Heading as='h1' size='lg' justification='left'>
           Profile
         </Heading>
         <p>This is how others will see you on the site.</p>

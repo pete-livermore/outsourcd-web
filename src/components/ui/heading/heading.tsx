@@ -6,7 +6,7 @@ import { cn } from '@/utils/styles'
 export interface HeadingProps
   extends React.HTMLAttributes<HTMLHeadingElement>,
     VariantProps<typeof headingVariants> {
-  level: 1 | 2 | 3 | 4
+  as: 'h1' | 'h2' | 'h3' | 'h4'
 }
 
 const headingVariants = cva([], {
@@ -39,28 +39,25 @@ const headingVariants = cva([], {
 
 export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>(
   (
-    { className, justification, level = 1, size = 'lg', textColor, ...props },
+    { className, justification, as = 'h1', size, weight, textColor, ...props },
     ref,
   ) => {
-    const classes = cn(
-      headingVariants({ size, textColor, justification, className }),
+    const Element = as
+    return (
+      <Element
+        className={cn(
+          headingVariants({
+            size,
+            textColor,
+            justification,
+            className,
+            weight,
+          }),
+        )}
+        ref={ref}
+        {...props}
+      />
     )
-
-    const elementProps = { className: classes, ...props }
-
-    switch (level) {
-      case 1: {
-        return <h1 ref={ref} {...elementProps}></h1>
-      }
-      case 2: {
-        return <h2 ref={ref} {...elementProps}></h2>
-      }
-      case 3: {
-        return <h3 ref={ref} {...elementProps}></h3>
-      }
-      default:
-        throw new Error('Heading requires level')
-    }
   },
 )
 
