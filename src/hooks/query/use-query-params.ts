@@ -16,13 +16,16 @@ export function useQueryParams() {
     [searchParams],
   )
 
-  function set(name: string, value: string | number) {
-    router.push(pathname + '?' + createQueryString(name, String(value)))
-  }
+  const set = useCallback(
+    (name: string, value: string | number) => {
+      router.push(pathname + '?' + createQueryString(name, String(value)))
+    },
+    [router, pathname, createQueryString],
+  )
 
-  function clear() {
+  const clear = useCallback(() => {
     router.push(pathname, { scroll: false })
-  }
+  }, [router, pathname])
 
   return { set, clear }
 }
