@@ -2,8 +2,8 @@
 
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
 import { useQueryParams } from '@/hooks/query/use-query-params'
+import { Job } from '@/lib/jobs/jobs'
 
-import { Job } from '../page'
 import { JobDetail } from './job-detail'
 import { JobFilters } from './job-filters'
 import { JobsListItem } from './jobs-list-item'

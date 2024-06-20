@@ -8,9 +8,9 @@ import { Badge } from '@/components/ui/badge'
 import { buttonVariants } from '@/components/ui/button'
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Spinner } from '@/components/ui/spinner'
+import { Job } from '@/lib/jobs/jobs'
 import { cn } from '@/utils/styles'
 
-import { Job } from '../page'
 import { CompanyInfo } from '.'
 
 interface JobDetailProps {
