@@ -16,8 +16,8 @@ const meta: Meta<typeof Heading> = {
       options: ['xxl', 'xl', 'lg', 'md', 'sm'],
       control: { type: 'select' },
     },
-    level: {
-      options: [1, 2, 3],
+    as: {
+      options: ['h1', 'h2', 'h3'],
       control: { type: 'select' },
     },
   },

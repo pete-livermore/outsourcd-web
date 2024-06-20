@@ -19,7 +19,7 @@ export async function Hero() {
       />
       <div className='absolute inset-1/2 h-fit min-w-[600px] -translate-x-1/2 -translate-y-1/2 space-y-8'>
         <Heading
-          level={1}
+          as='h1'
           justification='left'
           textColor='white'
           size='xxl'

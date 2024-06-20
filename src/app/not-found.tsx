@@ -8,7 +8,7 @@ export default function NotFoundPage() {
     <div className='flex h-screen w-full items-center justify-center px-4'>
       <div className='flex flex-col justify-center space-y-3'>
         <div>
-          <Heading level={1} size='xl'>
+          <Heading as='h1' size='xl'>
             <Hammer className='mr-2 inline' size={48} />
             This page is under construction
           </Heading>
