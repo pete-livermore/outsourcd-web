@@ -1,7 +1,6 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 
-import { ResultType } from '@/enums/result-type'
 import { buildRedirectUrl } from '@/lib/auth/redirect-url'
 import { getJobs } from '@/lib/jobs/jobs'
 
@@ -18,8 +17,8 @@ export default async function JobsPage({
 
   const jobsResult = await getJobs({ filters, populate: { company: true } })
 
-  if (jobsResult.type === ResultType.FAILURE) {
-    if (jobsResult.reason === 'auth') {
+  if (jobsResult.type === 'failure') {
+    if (jobsResult.failureReason === 'auth-error') {
       redirect(redirectUrl)
     } else {
       redirect('/error/500')
