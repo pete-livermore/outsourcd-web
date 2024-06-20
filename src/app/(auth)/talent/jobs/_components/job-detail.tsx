@@ -1,14 +1,16 @@
 'use client'
 import { format } from 'date-fns'
 import { Banknote, Calendar } from 'lucide-react'
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button'
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Spinner } from '@/components/ui/spinner'
+import { Job } from '@/lib/jobs/jobs'
+import { cn } from '@/utils/styles'
 
-import { Job } from '../page'
 import { CompanyInfo } from '.'
 
 interface JobDetailProps {
@@ -66,8 +68,6 @@ export function JobDetail({ id }: JobDetailProps) {
   const salaryText = `${salaryRange} ${salary.currency} per ${salaryPeriod}`
   const startDate = format(start_date, 'io MMM yy')
 
-  console.log('job', job)
-
   return (
     <div>
       <CardHeader>
@@ -91,7 +91,12 @@ export function JobDetail({ id }: JobDetailProps) {
       </CardHeader>
       <CardContent>
         <p className='py-4'>{description}</p>
-        <Button variant='default'>Apply</Button>
+        <Link
+          href={`/talent/jobs/${id}/apply`}
+          className={cn(buttonVariants())}
+        >
+          Apply
+        </Link>
       </CardContent>
     </div>
   )

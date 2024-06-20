@@ -1,4 +1,4 @@
-import { getJob } from '../../../(auth)/talent/jobs/loaders'
+import { getJob } from '@/lib/jobs/jobs'
 
 export async function GET(
   request: Request,
@@ -10,7 +10,29 @@ export async function GET(
     return
   }
 
-  const job = await getJob(parseInt(id), { company: true })
+  const jobResult = await getJob(parseInt(id), { company: true })
 
+  if (jobResult.type === 'failure') {
+    if (jobResult.failureReason === 'auth-error') {
+      return Response.json(
+        {
+          message: 'Unauthenticated',
+        },
+        {
+          status: 401,
+        },
+      )
+    }
+    return Response.json(
+      {
+        message: 'Internal Server Error',
+      },
+      {
+        status: 500,
+      },
+    )
+  }
+
+  const { data: job } = jobResult
   return Response.json({ job })
 }

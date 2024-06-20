@@ -1,9 +1,9 @@
 'use client'
 
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
-import { useQueryParams } from '@/hooks/query/use-query-params'
+import { useSearchParams } from '@/hooks/search/use-search-params'
+import { Job } from '@/lib/jobs/jobs'
 
-import { Job } from '../page'
 import { JobDetail } from './job-detail'
 import { JobFilters } from './job-filters'
 import { JobsListItem } from './jobs-list-item'
@@ -14,11 +14,11 @@ interface JobsProps {
 }
 
 export function JobsPanel({ jobs, selectedJobId }: JobsProps) {
-  const { clear } = useQueryParams()
+  const searchParams = useSearchParams()
 
   function handleOpenChange(isOpen: boolean) {
     if (!isOpen) {
-      clear()
+      searchParams.clear()
     }
   }
   return (

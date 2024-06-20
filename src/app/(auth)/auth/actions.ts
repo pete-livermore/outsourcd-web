@@ -26,9 +26,10 @@ export async function login(
 
   const validatedFields = loginSchema.safeParse(rawFormData)
 
-  // Return early if the form data is invalid
   if (!validatedFields.success) {
     return {
+      result: 'failure',
+      failureReason: 'validation-error',
       errors: validatedFields.error.flatten().fieldErrors,
     }
   }
@@ -42,27 +43,43 @@ export async function login(
   })
 
   if (!res.ok) {
-    return { result: 'failure' }
+    if (res.status === 401) {
+      return {
+        result: 'failure',
+        failureReason: 'auth-error',
+      }
+    }
+    return {
+      result: 'failure',
+      failureReason: 'auth-error',
+    }
   }
 
-  const resData = await res.json()
+  const resBody = await res.json()
 
-  if (!resData.token) {
-    redirect('/error/500')
-  }
-
-  cookies().set({
+  const authCookie = {
     name: env.AUTH_COOKIE_NAME,
-    value: resData.token,
+    value: resBody.token,
     httpOnly: true,
     path: '/',
-  })
+  }
+
+  cookies().set(authCookie)
+
+  const userCookie = {
+    name: 'user',
+    value: resBody.user.id,
+    path: '/talent',
+  }
+
+  cookies().set(userCookie)
 
   return { result: 'success' }
 }
 
 export async function logout() {
   cookies().delete(env.AUTH_COOKIE_NAME)
+  cookies().delete('user')
 
   return redirect('/auth/login')
 }

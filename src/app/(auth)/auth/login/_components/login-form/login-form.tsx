@@ -10,18 +10,11 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Spinner } from '@/components/ui/spinner'
+import { FormState } from '@/types/form/form-state'
 import { cn } from '@/utils/styles'
 
-export type LoginFormState =
-  | {
-      errors: { password?: string[]; email?: string[] }
-      result?: undefined
-    }
-  | { errors?: undefined; result: 'success' | 'failure' }
-
-const initialState: LoginFormState = {
-  errors: { password: [], email: [] },
-}
+const formFields = ['password', 'email'] as const
+export type LoginFormState = FormState<typeof formFields>
 
 interface LoginFormProps extends React.HTMLAttributes<HTMLFormElement> {
   redirectUrl?: string
@@ -30,11 +23,13 @@ interface LoginFormProps extends React.HTMLAttributes<HTMLFormElement> {
 export function LoginForm({ className, redirectUrl }: LoginFormProps) {
   const { pending } = useFormStatus()
   const router = useRouter()
-  const [state, formAction] = useFormState(login, initialState)
-  const errors = state?.errors
+  const [state, formAction] = useFormState(login, {})
+
+  const hasFailedValidation =
+    state.result === 'failure' && state.failureReason === 'validation-error'
 
   useEffect(() => {
-    if (state?.result === 'success') {
+    if (state.result === 'success') {
       router.push(redirectUrl ?? '/')
     }
   }, [state, router, redirectUrl])
@@ -55,7 +50,9 @@ export function LoginForm({ className, redirectUrl }: LoginFormProps) {
               placeholder='Enter your email'
               autoComplete='email'
             />
-            <FormFieldErrorMessage errors={errors?.email} />
+            {hasFailedValidation && (
+              <FormFieldErrorMessage errors={state.errors.email} />
+            )}
           </div>
           <div>
             <Label htmlFor='password' className='sr-only'>
@@ -68,7 +65,9 @@ export function LoginForm({ className, redirectUrl }: LoginFormProps) {
               placeholder='Enter your password'
               autoComplete='current-password'
             />
-            <FormFieldErrorMessage errors={errors?.password} />
+            {hasFailedValidation && (
+              <FormFieldErrorMessage errors={state.errors.password} />
+            )}
           </div>
         </div>
         {state.result === 'failure' && <p>Login failed</p>}

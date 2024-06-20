@@ -5,7 +5,7 @@ import { CardDescription } from '@/components/ui/card'
 import { CardTitle } from '@/components/ui/card'
 import { CardContent } from '@/components/ui/card'
 import { Card } from '@/components/ui/card'
-import { useQueryParams } from '@/hooks/query/use-query-params'
+import { useSearchParams } from '@/hooks/search/use-search-params'
 
 import { CompanyInfo } from '.'
 
@@ -25,10 +25,10 @@ export function JobsListItem({
   description,
   company,
 }: JobsListItemProps) {
-  const { set } = useQueryParams()
+  const searchParams = useSearchParams()
 
   function handleJobClick() {
-    set('detail', id)
+    searchParams.set('detail', id)
   }
 
   return (

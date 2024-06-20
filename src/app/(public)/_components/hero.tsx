@@ -9,7 +9,7 @@ const HERO_IMAGE_ALT_TEXT = 'working in a coffee shop'
 
 export async function Hero() {
   return (
-    <div className='relative h-[500px] w-full' data-testId='homepage-hero'>
+    <div className='relative h-[500px] w-full' data-testid='homepage-hero'>
       <CldImage
         src={HERO_IMAGE_PUBLIC_ID}
         alt={HERO_IMAGE_ALT_TEXT}
@@ -19,7 +19,7 @@ export async function Hero() {
       />
       <div className='absolute inset-1/2 h-fit min-w-[600px] -translate-x-1/2 -translate-y-1/2 space-y-8'>
         <Heading
-          level={1}
+          as='h1'
           justification='left'
           textColor='white'
           size='xxl'

@@ -6,6 +6,7 @@ import { z } from 'zod'
 
 import { env } from '@/config/env'
 import { getAuthToken } from '@/lib/auth/token'
+import { logger } from '@/utils/log'
 
 import { getAuthenticatedUser } from '../../auth/loaders'
 import { ProfileFormState } from './_components/profile-form'
@@ -31,7 +32,9 @@ async function uploadUserProfileImage(blob: Blob, userId: number) {
   })
 
   if (!res.ok) {
-    console.log(`image ${fileName} not uploaded: ${res.status}`)
+    logger.error(
+      `image ${fileName} not uploaded (received status ${res.status})`,
+    )
   }
 
   const resBody = await res.json()
@@ -108,6 +111,7 @@ export async function updateUser(
   })
 
   if (!res.ok) {
+    logger.error(`user ${user.id} not updated (received status ${res.status})`)
     return { result: 'failure' }
   }
 
