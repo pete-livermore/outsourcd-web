@@ -1,4 +1,3 @@
-import { ResultType } from '@/enums/result-type'
 import { ApiResult } from '@/types/api/api-result'
 
 import { getAuthToken } from '../auth/token'
@@ -14,16 +13,18 @@ export async function get<T>(url: string): Promise<ApiResult<T>> {
   if (!res.ok) {
     if (res.status === 401) {
       return {
-        type: ResultType.FAILURE,
-        reason: 'auth',
+        type: 'failure',
+        failureReason: 'auth-error',
+        errors: [],
       }
     }
     return {
-      type: ResultType.FAILURE,
-      reason: 'server',
+      type: 'failure',
+      failureReason: 'server-error',
+      errors: [],
     }
   }
 
   const resBody = await res.json()
-  return { type: ResultType.SUCCESS, data: resBody.data }
+  return { type: 'success', data: resBody.data }
 }
