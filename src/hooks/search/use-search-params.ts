@@ -1,10 +1,14 @@
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import {
+  usePathname,
+  useRouter,
+  useSearchParams as baseUseSearchParams,
+} from 'next/navigation'
 import { useCallback } from 'react'
 
-export function useQueryParams() {
+export function useSearchParams() {
   const pathname = usePathname()
   const router = useRouter()
-  const searchParams = useSearchParams()
+  const searchParams = baseUseSearchParams()
 
   const createQueryString = useCallback(
     (name: string, value: string | number) => {
@@ -15,6 +19,8 @@ export function useQueryParams() {
     },
     [searchParams],
   )
+
+  const get = useCallback(() => searchParams, [searchParams])
 
   const set = useCallback(
     (name: string, value: string | number) => {
@@ -27,5 +33,5 @@ export function useQueryParams() {
     router.push(pathname, { scroll: false })
   }, [router, pathname])
 
-  return { set, clear }
+  return { get, set, clear }
 }
