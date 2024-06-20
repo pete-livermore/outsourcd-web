@@ -1,4 +1,3 @@
-import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 
 import { buildRedirectUrl } from '@/lib/auth/redirect-url'
@@ -9,12 +8,10 @@ import { JobsPanel } from './_components'
 export default async function JobsPage({
   searchParams,
 }: {
-  searchParams: { detail: string | undefined }
+  searchParams: { detail?: string; filters?: string }
 }) {
   const redirectUrl = buildRedirectUrl()
-  const filtersCookie = cookies().get('filters')
-  const filters = filtersCookie ? JSON.parse(filtersCookie.value) : {}
-
+  const filters = searchParams.filters ? JSON.parse(searchParams.filters) : {}
   const jobsResult = await getJobs({ filters, populate: { company: true } })
 
   if (jobsResult.type === 'failure') {
