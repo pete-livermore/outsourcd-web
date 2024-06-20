@@ -1,9 +1,29 @@
-import { cookies } from 'next/headers'
+import { NextResponse } from 'next/server'
+import { z } from 'zod'
+
+const setCookieSchema = z.object({
+  name: z.string(),
+  value: z.any(),
+  httpOnly: z.boolean().optional(),
+  path: z.string().optional(),
+})
 
 export async function POST(req: Request) {
-  const { name, data } = await req.json()
+  const body = await req.json()
+  setCookieSchema.parse(body)
 
-  cookies().set(name, JSON.stringify(data))
+  const { name, value, ...options } = body
 
-  return Response.json({ message: 'success' })
+  const response = NextResponse.json(
+    {},
+    { status: 200, statusText: 'Set cookie successfully' },
+  )
+
+  response.cookies.set({
+    name: name,
+    value: value,
+    ...options,
+  })
+
+  return response
 }
