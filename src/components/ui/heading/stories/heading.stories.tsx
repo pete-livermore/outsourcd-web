@@ -54,13 +54,6 @@ export const Large: Story = {
   },
 }
 
-export const LeftAligned: Story = {
-  args: {
-    children: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    justification: 'left',
-  },
-}
-
 export const Grey: Story = {
   args: {
     children: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',

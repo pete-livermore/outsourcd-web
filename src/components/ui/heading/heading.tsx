@@ -9,7 +9,7 @@ export interface HeadingProps
   as: 'h1' | 'h2' | 'h3' | 'h4'
 }
 
-const headingVariants = cva([], {
+const headingVariants = cva(['text-center'], {
   variants: {
     size: {
       xxl: 'my-8 text-6xl sm:mb-4 md:mt-4',
@@ -24,24 +24,16 @@ const headingVariants = cva([], {
       grey: 'text-gray-600',
       white: 'text-white',
     },
-    justification: {
-      center: 'text-center',
-      left: 'text-left',
-    },
   },
   defaultVariants: {
     size: 'lg',
     weight: 'bold',
     textColor: 'primary',
-    justification: 'center',
   },
 })
 
 export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>(
-  (
-    { className, justification, as = 'h1', size, weight, textColor, ...props },
-    ref,
-  ) => {
+  ({ className, as = 'h1', size, weight, textColor, ...props }, ref) => {
     const Element = as
     return (
       <Element
@@ -49,7 +41,6 @@ export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>(
           headingVariants({
             size,
             textColor,
-            justification,
             className,
             weight,
           }),
