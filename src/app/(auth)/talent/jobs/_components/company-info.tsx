@@ -1,6 +1,6 @@
 'use client'
 
-import CldImage from '@/components/ui/image/cld-image'
+import { CldImage } from '@/components/ui/cld-image'
 
 export function CompanyInfo({ name }: { name: string }) {
   return (
