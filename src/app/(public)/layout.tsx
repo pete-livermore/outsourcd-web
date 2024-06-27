@@ -14,7 +14,7 @@ export default async function PublicLayout({
 }>) {
   return (
     <>
-      <GlobalNavigationMenu />
+      <GlobalNavigationMenu className='fixed inset-x-0 top-0 z-50' />
       <main>{children}</main>
     </>
   )
