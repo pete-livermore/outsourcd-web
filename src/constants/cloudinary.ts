@@ -1,0 +1,1 @@
+export const CLOUDINARY_FOLDER_NAME = 'outsourcd'

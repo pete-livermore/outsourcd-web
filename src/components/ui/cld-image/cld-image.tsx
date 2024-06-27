@@ -2,7 +2,7 @@
 import { CldImage as BaseCldImage, CldImageProps } from 'next-cloudinary'
 import React from 'react'
 
-const CLOUDINARY_FOLDER_NAME = 'outsourcd'
+import { CLOUDINARY_FOLDER_NAME } from '@/constants/cloudinary'
 
 export const CldImage = React.forwardRef<HTMLImageElement, CldImageProps>(
   ({ src, ...props }, ref) => {
