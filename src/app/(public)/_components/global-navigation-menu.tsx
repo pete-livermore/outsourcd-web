@@ -1,5 +1,7 @@
 'use client'
 
+import * as VisuallyHidden from '@radix-ui/react-visually-hidden'
+import { cva } from 'class-variance-authority'
 import { ChevronRight, Menu } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -20,8 +22,10 @@ import {
   SheetContent,
   SheetDescription,
   SheetHeader,
+  SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet'
+import { useScroll } from '@/hooks/scroll/use-scroll'
 import { cn } from '@/utils/styles'
 
 interface GettingStartedItem {
@@ -73,40 +77,45 @@ function MobileNavView() {
       <div className='px-4'>
         <Sheet>
           <SheetTrigger asChild>
-            <Menu className='cursor-pointer' />
+            <Menu className='cursor-pointer' color='white' />
           </SheetTrigger>
           <SheetContent>
             <SheetHeader>
               <OutsourcdLogo height={75} width={300} />
-              <SheetDescription>
-                <ul className='mt-6 space-y-4'>
-                  <ExpandingListItem text='Getting started'>
-                    <ul>
-                      {GETTING_STARTED_ITEMS.map((item) => (
-                        <li key={item.title}>
-                          <Link
-                            href={item.href}
-                            className={cn(
-                              'block select-none space-y-1 rounded-md p-3 leading-none text-gray-800 no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
-                            )}
-                          >
-                            <div className='text-sm font-medium leading-none'>
-                              {item.title}
-                            </div>
-                            <p className='line-clamp-2 text-sm leading-snug text-muted-foreground'>
-                              {item.description}
-                            </p>
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </ExpandingListItem>
-                  <li className='cursor-pointer font-semibold text-black'>
-                    Plans and pricing
-                  </li>
-                </ul>
-              </SheetDescription>
+              <VisuallyHidden.Root>
+                <SheetTitle className='invisible'>Edit profile</SheetTitle>
+                <SheetDescription className='invisible'>
+                  Make changes to your profile here. Click save when you&apos;re
+                  done.
+                </SheetDescription>
+              </VisuallyHidden.Root>
             </SheetHeader>
+            <ul className='mt-6 space-y-4'>
+              <ExpandingListItem text='Getting started'>
+                <ul>
+                  {GETTING_STARTED_ITEMS.map((item) => (
+                    <li key={item.title}>
+                      <Link
+                        href={item.href}
+                        className={cn(
+                          'block select-none space-y-1 rounded-md px-2 pt-4 leading-none text-gray-800 no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
+                        )}
+                      >
+                        <div className='text-sm font-medium leading-none'>
+                          {item.title}
+                        </div>
+                        <p className='line-clamp-2 text-sm leading-snug text-muted-foreground'>
+                          {item.description}
+                        </p>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </ExpandingListItem>
+              <li className='cursor-pointer font-semibold text-black'>
+                Plans and pricing
+              </li>
+            </ul>
           </SheetContent>
         </Sheet>
       </div>
@@ -141,13 +150,32 @@ const NavListItem = React.forwardRef<
 
 NavListItem.displayName = 'NavListItem'
 
-function DesktopNavView() {
+const navStyles = cva([], {
+  variants: {
+    background: {
+      light: 'bg-background',
+      dark: 'bg-transparent',
+    },
+    text: {
+      light: 'text-black',
+      dark: 'text-primary-foreground',
+    },
+  },
+})
+
+interface DesktopNavViewProps {
+  colorScheme: 'light' | 'dark'
+}
+
+function DesktopNavView({ colorScheme }: DesktopNavViewProps) {
   return (
     <div className='hidden grow justify-between lg:flex'>
       <NavigationMenu>
         <NavigationMenuList>
           <NavigationMenuItem>
-            <NavigationMenuTrigger>Getting started</NavigationMenuTrigger>
+            <NavigationMenuTrigger className={navStyles({ text: colorScheme })}>
+              Getting started
+            </NavigationMenuTrigger>
             <NavigationMenuContent>
               <ul className='grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] '>
                 {GETTING_STARTED_ITEMS.map((item) => (
@@ -164,7 +192,12 @@ function DesktopNavView() {
           </NavigationMenuItem>
           <NavigationMenuItem>
             <Link href='/plans-and-pricing' legacyBehavior passHref>
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+              <NavigationMenuLink
+                className={cn(
+                  navigationMenuTriggerStyle(),
+                  navStyles({ text: colorScheme }),
+                )}
+              >
                 Plans and pricing
               </NavigationMenuLink>
             </Link>
@@ -175,7 +208,12 @@ function DesktopNavView() {
   )
 }
 
-export function GlobalNavigationMenu() {
+interface GlobalNavigationMenuProps
+  extends React.HTMLAttributes<HTMLDivElement> {}
+
+export function GlobalNavigationMenu({ className }: GlobalNavigationMenuProps) {
+  const { scrollPosition } = useScroll()
+  const colorScheme = scrollPosition.top > 0 ? 'light' : 'dark'
   const router = useRouter()
 
   function handleLogoClick() {
@@ -183,11 +221,13 @@ export function GlobalNavigationMenu() {
   }
 
   return (
-    <div className='flex'>
-      <div className='cursor-pointer pt-1'>
-        <OutsourcdLogo height={75} width={300} onClick={handleLogoClick} />
+    <div
+      className={cn('flex', navStyles({ background: colorScheme }), className)}
+    >
+      <div className='cursor-pointer py-3'>
+        <OutsourcdLogo height={55} width={300} onClick={handleLogoClick} />
       </div>
-      <DesktopNavView />
+      <DesktopNavView colorScheme={colorScheme} />
       <MobileNavView />
     </div>
   )
