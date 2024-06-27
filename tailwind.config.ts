@@ -67,13 +67,21 @@ const config = {
           from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: '0' },
         },
-        'fade-in': {
-          from: { opacity: '0' },
-          to: { opacity: '1' },
+        'fade-out': {
+          from: { opacity: '1' },
+          to: { opacity: '0' },
         },
         'expand-width': {
           from: { width: '0' },
           to: { width: '100%' },
+        },
+        slide: {
+          from: {
+            transform: 'translateX(0)',
+          },
+          to: {
+            transform: 'translateX(-100%)',
+          },
         },
       },
       animation: {
@@ -81,6 +89,7 @@ const config = {
         'accordion-up': 'accordion-up 0.2s ease-out',
         'fade-in': 'fade-in 1s ease-in forwards',
         'expand-width': 'expand-width 0.8s ease-in forwards',
+        slide: 'slide 25s infinite linear',
       },
     },
   },
