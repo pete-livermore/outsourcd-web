@@ -51,7 +51,7 @@ export async function login(
     }
     return {
       result: 'failure',
-      failureReason: 'auth-error',
+      failureReason: 'server-error',
     }
   }
 

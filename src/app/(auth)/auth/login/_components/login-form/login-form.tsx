@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Spinner } from '@/components/ui/spinner'
+import { useToast } from '@/components/ui/toast'
 import { FormState } from '@/types/form/form-state'
 import { cn } from '@/utils/styles'
 
@@ -20,10 +21,16 @@ interface LoginFormProps extends React.HTMLAttributes<HTMLFormElement> {
   redirectUrl?: string
 }
 
+const ERROR_MESSAGES: { [key: string]: string } = {
+  'auth-error': 'The provided credentials are invalid',
+  'server-error': 'There was an unknown error',
+}
+
 export function LoginForm({ className, redirectUrl }: LoginFormProps) {
   const { pending } = useFormStatus()
   const router = useRouter()
   const [state, formAction] = useFormState(login, {})
+  const { toast } = useToast()
 
   const hasFailedValidation =
     state.result === 'failure' && state.failureReason === 'validation-error'
@@ -32,7 +39,15 @@ export function LoginForm({ className, redirectUrl }: LoginFormProps) {
     if (state.result === 'success') {
       router.push(redirectUrl ?? '/')
     }
-  }, [state, router, redirectUrl])
+
+    if (state.result === 'failure') {
+      toast({
+        variant: 'destructive',
+        title: 'Login failed',
+        description: ERROR_MESSAGES[state.failureReason],
+      })
+    }
+  }, [state, router, redirectUrl, toast])
 
   return (
     <form action={formAction} className={cn(className)}>
@@ -70,7 +85,6 @@ export function LoginForm({ className, redirectUrl }: LoginFormProps) {
             )}
           </div>
         </div>
-        {state.result === 'failure' && <p>Login failed</p>}
         <div className='mt-12 w-full'>
           {!pending ? (
             <Button type='submit' size='lg' className='w-full'>
