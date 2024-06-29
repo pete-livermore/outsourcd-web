@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum ContentType {
+  photo
+  video
+  text
+}
+
+model Content {
+  id            String       @id @default(auto()) @map("_id") @db.ObjectId
+  type          ContentType
+  url           String?
+  value         String?
+  pageSection   PageSection? @relation(fields: [pageSectionId], references: [id])
+  pageSectionId String?      @db.ObjectId
+}
+
+model Page {
+  id       String        @id @default(auto()) @map("_id") @db.ObjectId
+  slug     String        @unique
+  title    String?
+  sections PageSection[]
+  metadata Json
+}
+
+model PageSection {
+  id      String    @id @default(auto()) @map("_id") @db.ObjectId
+  name    String    @unique
+  title   String?
+  content Content[]
+  pageId  String?   @db.ObjectId
+  page    Page?     @relation(fields: [pageId], references: [id])
+}
