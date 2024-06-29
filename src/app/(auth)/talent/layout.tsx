@@ -63,7 +63,7 @@ export default async function TalentLayout({
 
   return (
     <div>
-      <div className='fixed right-8 top-6 z-50'>
+      <div className='absolute right-8 top-6 z-50'>
         <DropdownMenu>
           <DropdownMenuTrigger>
             <Avatar>
