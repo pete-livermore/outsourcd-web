@@ -6,7 +6,7 @@ import { z } from 'zod'
 
 import { env } from '@/config/env'
 import { getAuthToken } from '@/lib/auth/token'
-import { logger } from '@/utils/log'
+import { logger } from '@/utils/logging/logger'
 
 import { getAuthenticatedUser } from '../../auth/loaders'
 import { ProfileFormState } from './_components/profile-form'
@@ -60,7 +60,7 @@ interface RawFormData {
 
 export async function updateUser(
   additionalFormData: FormData,
-  prevState: ProfileFormState,
+  _prevState: ProfileFormState,
   formData: FormData,
 ): Promise<ProfileFormState> {
   const token = getAuthToken()
