@@ -20,7 +20,10 @@ export function useSearchParams() {
     [searchParams],
   )
 
-  const get = useCallback(() => searchParams, [searchParams])
+  const get = useCallback(
+    (key: string) => searchParams.get(key),
+    [searchParams],
+  )
 
   const set = useCallback(
     (name: string, value: string | number) => {
