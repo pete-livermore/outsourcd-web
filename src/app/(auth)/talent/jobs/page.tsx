@@ -5,14 +5,27 @@ import { getJobs } from '@/lib/jobs/jobs'
 
 import { JobsPanel } from './_components'
 
+interface Filters {
+  [key: string]: string[]
+}
+
 export default async function JobsPage({
   searchParams,
 }: {
-  searchParams: { detail?: string; filters?: string }
+  searchParams: { [key: string]: string }
 }) {
   const redirectUrl = buildRedirectUrl()
-  const filters = searchParams.filters ? JSON.parse(searchParams.filters) : {}
-  const jobsResult = await getJobs({ filters, populate: { company: true } })
+  const filters = Object.entries(searchParams).reduce(
+    (acc: Filters, [key, value]) => {
+      acc[key] = JSON.parse(value)
+      return acc
+    },
+    {},
+  )
+  const jobsResult = await getJobs({
+    filters,
+    populate: { company: true },
+  })
 
   if (jobsResult.type === 'failure') {
     if (jobsResult.failureReason === 'auth-error') {
@@ -23,13 +36,10 @@ export default async function JobsPage({
   }
 
   const { data: jobs } = jobsResult
-  const selectedJobId = searchParams.detail
-    ? parseInt(searchParams.detail)
-    : null
 
   return (
     <div>
-      <JobsPanel jobs={jobs} selectedJobId={selectedJobId} />
+      <JobsPanel jobs={jobs} />
     </div>
   )
 }

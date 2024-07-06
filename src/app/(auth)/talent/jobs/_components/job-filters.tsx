@@ -1,88 +1,142 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useMemo } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DatePicker } from '@/components/ui/date-picker'
 import { Label } from '@/components/ui/label'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Slider } from '@/components/ui/slider'
 import { useSearchParams } from '@/hooks/search/use-search-params'
 
-interface Filters {
-  [key: string]: object | string | number | boolean
-}
+type FilterName = 'employmentTypes' | 'locationTypes'
 
 const EMPLOYMENT_TYPES = ['permanent', 'temporary', 'contract'] as const
 const LOCATION_TYPES = ['on-site', 'remote', 'hybrid'] as const
 
+interface FilterOptionProps {
+  value: string
+  label: string
+  name: FilterName
+  onAddFilter: (filterName: string, filterValue: string) => void
+  onClearFilter: (filterName: string, filterValue: string) => void
+}
+
+const FilterOption = ({
+  value,
+  label,
+  name,
+  onAddFilter,
+  onClearFilter,
+}: FilterOptionProps) => {
+  const searchParams = useSearchParams()
+  const filterParam = searchParams.get(name)
+
+  const isChecked = useMemo(() => {
+    if (!filterParam) return false
+    const filterValues: string[] = JSON.parse(filterParam)
+    return filterValues.includes(value)
+  }, [filterParam, value])
+
+  function handleCheckChange(checked: string | boolean) {
+    checked ? onAddFilter(name, value) : onClearFilter(name, value)
+  }
+
+  return (
+    <div className='flex'>
+      <Checkbox
+        id={value}
+        checked={isChecked}
+        onCheckedChange={handleCheckChange}
+        className='mr-2'
+      />
+      <div className='grid gap-1.5 leading-none'>
+        <Label
+          htmlFor={value}
+          className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
+        >
+          {label}
+        </Label>
+      </div>
+    </div>
+  )
+}
+
 export function JobFilters() {
-  const [filters, setFilters] = useState<Filters>({})
   const searchParams = useSearchParams()
 
-  useEffect(() => {
-    if (Object.keys(filters).length) {
-      searchParams.set('filters', JSON.stringify(filters))
-    } else {
-      searchParams.clear()
-    }
-  }, [filters, searchParams])
-
-  function filterOnEmploymentType(option: string, checked: string | boolean) {
-    if (checked) {
-      setFilters({ ...filters, employmentType: option })
-    }
+  function handleClearFiltersBtnClick() {
+    searchParams.clear()
   }
 
-  function filterOnLocationType(value: string) {
-    setFilters({ ...filters, location: { type: value } })
-  }
+  const setFiltersQuery = useCallback(
+    (filterName: string, filterValue: string) => {
+      const prevFilterParamValue = searchParams.get(filterName)
+      const prevFilterValues: string[] = prevFilterParamValue
+        ? JSON.parse(prevFilterParamValue)
+        : []
+      const updatedFilterValues = new Set(prevFilterValues).add(filterValue)
+      const updatedFilterParamValue = JSON.stringify(
+        Array.from(updatedFilterValues),
+      )
+      searchParams.set(filterName, updatedFilterParamValue)
+    },
+    [searchParams],
+  )
 
-  function handleLocationTypeValueChange(value: string) {
-    filterOnLocationType(value)
-  }
+  const removeFiltersQuery = useCallback(
+    (filterName: string, filterValue: string) => {
+      const prevFilterParamValue = searchParams.get(filterName)
 
-  function clearFilters() {
-    const clearedFilters = {}
-    setFilters(clearedFilters)
-  }
+      if (!prevFilterParamValue) return
 
-  function handleClearFiltersBtnClick(_e: React.MouseEvent<HTMLButtonElement>) {
-    clearFilters()
-  }
+      const prevFilterValues: string[] = prevFilterParamValue
+        ? JSON.parse(prevFilterParamValue)
+        : []
+
+      if (!prevFilterValues.length) return
+
+      const updatedFilterValues = prevFilterValues.filter(
+        (f) => f !== filterValue,
+      )
+
+      if (!updatedFilterValues.length) {
+        return searchParams.clear()
+      }
+
+      searchParams.set(filterName, JSON.stringify(updatedFilterValues))
+    },
+    [searchParams],
+  )
 
   return (
     <div className='mb-6 flex gap-x-4 p-6'>
       <Slider defaultValue={[50]} max={100} step={1} className='w-1/5' />
       <DatePicker />
       <div className='flex flex-col space-y-2'>
-        {EMPLOYMENT_TYPES.map((et, i) => (
-          <div className='flex' key={i}>
-            <Checkbox
-              id={et}
-              onCheckedChange={(checked) => filterOnEmploymentType(et, checked)}
-              className='mr-2'
-            />
-            <div className='grid gap-1.5 leading-none'>
-              <Label
-                htmlFor='terms1'
-                className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
-              >
-                {et}
-              </Label>
-            </div>
-          </div>
+        {EMPLOYMENT_TYPES.map((et) => (
+          <FilterOption
+            key={et}
+            value={et}
+            label={et}
+            name='employmentTypes'
+            onAddFilter={setFiltersQuery}
+            onClearFilter={removeFiltersQuery}
+          />
         ))}
       </div>
-      <RadioGroup onValueChange={handleLocationTypeValueChange}>
+      <div className='flex flex-col space-y-2'>
         {LOCATION_TYPES.map((lt) => (
-          <div key={lt} className='flex items-center space-x-2'>
-            <RadioGroupItem value={lt} id={lt} />
-            <Label htmlFor={lt}>{lt}</Label>
-          </div>
+          <FilterOption
+            key={lt}
+            value={lt}
+            label={lt}
+            name='locationTypes'
+            onAddFilter={setFiltersQuery}
+            onClearFilter={removeFiltersQuery}
+          />
         ))}
-      </RadioGroup>
+      </div>
       <Button onClick={handleClearFiltersBtnClick}>Clear filters</Button>
     </div>
   )
