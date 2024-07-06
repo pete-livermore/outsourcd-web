@@ -9,6 +9,7 @@ import { buttonVariants } from '@/components/ui/button'
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Spinner } from '@/components/ui/spinner'
 import { Job } from '@/lib/jobs/jobs'
+import { capitaliseFirst } from '@/utils/data-transformation/capitalise-first'
 import { cn } from '@/utils/styles'
 
 import { CompanyInfo } from '.'
@@ -62,7 +63,14 @@ export function JobDetail({ id }: JobDetailProps) {
     return null
   }
 
-  const { title, company, description, salary, start_date } = job
+  const {
+    title,
+    company,
+    description,
+    salary,
+    start_date,
+    employment_type: employmentType,
+  } = job
   const salaryPeriod = salaryPeriods[salary.period]
   const salaryRange = `${salary.value.min} - ${salary.value.max}`
   const salaryText = `${salaryRange} ${salary.currency} per ${salaryPeriod}`
@@ -85,7 +93,7 @@ export function JobDetail({ id }: JobDetailProps) {
             </div>
           </div>
           <div className='flex'>
-            <Badge>Permanent</Badge>
+            <Badge>{capitaliseFirst(employmentType)}</Badge>
           </div>
         </div>
       </CardHeader>
