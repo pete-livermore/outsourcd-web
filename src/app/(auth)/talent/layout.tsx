@@ -3,19 +3,11 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
 import { env } from '@/config/env'
 import { buildRedirectUrl } from '@/lib/auth/redirect-url'
 import { getAuthToken } from '@/lib/auth/token'
 
+import { AvatarDropdown } from './_components/avatar-dropdown'
 import { CompanyLogo } from './_components/company-logo'
 
 export const metadata: Metadata = {
@@ -64,24 +56,7 @@ export default async function TalentLayout({
   return (
     <div>
       <div className='absolute right-8 top-6 z-50'>
-        <DropdownMenu>
-          <DropdownMenuTrigger>
-            <Avatar>
-              <AvatarImage src='' />
-              <AvatarFallback className='font-semibold text-primary'>
-                {userInitials}
-              </AvatarFallback>
-            </Avatar>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Profile</DropdownMenuItem>
-            <DropdownMenuItem>Billing</DropdownMenuItem>
-            <DropdownMenuItem>Team</DropdownMenuItem>
-            <DropdownMenuItem>Subscription</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <AvatarDropdown name={userInitials} />
       </div>
       <div className='flex w-full'>
         <div className='min-h-screen flex-none basis-72 bg-foreground px-2 py-12'>
