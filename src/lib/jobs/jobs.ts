@@ -16,6 +16,7 @@ export interface Job {
     value: { max: number; min: number }
     period: string
   }
+  employment_type: string
   start_date: string
 }
 
