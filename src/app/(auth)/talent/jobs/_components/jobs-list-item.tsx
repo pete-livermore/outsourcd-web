@@ -5,7 +5,6 @@ import { CardDescription } from '@/components/ui/card'
 import { CardTitle } from '@/components/ui/card'
 import { CardContent } from '@/components/ui/card'
 import { Card } from '@/components/ui/card'
-import { useSearchParams } from '@/hooks/search/use-search-params'
 
 import { CompanyInfo } from '.'
 
@@ -25,14 +24,8 @@ export function JobsListItem({
   description,
   company,
 }: JobsListItemProps) {
-  const searchParams = useSearchParams()
-
-  function handleJobClick() {
-    searchParams.set('detail', id)
-  }
-
   return (
-    <Card key={id} className='h-full cursor-pointer' onClick={handleJobClick}>
+    <Card key={id} className='h-full cursor-pointer'>
       <CardContent className='p-3'>
         <CompanyInfo name={company.name} />
       </CardContent>
