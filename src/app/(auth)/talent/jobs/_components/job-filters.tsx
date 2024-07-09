@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Slider } from '@/components/ui/slider'
 import { useSearchParams } from '@/hooks/search/use-search-params'
 
-type FilterName = 'employmentTypes' | 'locationTypes'
+type FilterName = 'employment_types' | 'location_types'
 
 const EMPLOYMENT_TYPES = ['permanent', 'temporary', 'contract'] as const
 const LOCATION_TYPES = ['on-site', 'remote', 'hybrid'] as const
@@ -110,32 +110,42 @@ export function JobFilters() {
   )
 
   return (
-    <div className='mb-6 flex gap-x-4 p-6'>
-      <Slider defaultValue={[50]} max={100} step={1} className='w-1/5' />
-      <DatePicker />
-      <div className='flex flex-col space-y-2'>
-        {EMPLOYMENT_TYPES.map((et) => (
-          <FilterOption
-            key={et}
-            value={et}
-            label={et}
-            name='employmentTypes'
-            onAddFilter={setFiltersQuery}
-            onClearFilter={removeFiltersQuery}
-          />
-        ))}
+    <div className='mb-6 flex items-center gap-x-4 p-6'>
+      {/* <Slider defaultValue={[50]} max={100} step={1} className='w-1/5' />
+      <DatePicker /> */}
+      <div className='mr-6 space-y-1.5'>
+        <p className='text-sm font-bold text-secondary-foreground'>
+          Employment type
+        </p>
+        <div className='flex space-x-2'>
+          {EMPLOYMENT_TYPES.map((et) => (
+            <FilterOption
+              key={et}
+              value={et}
+              label={et}
+              name='employment_types'
+              onAddFilter={setFiltersQuery}
+              onClearFilter={removeFiltersQuery}
+            />
+          ))}
+        </div>
       </div>
-      <div className='flex flex-col space-y-2'>
-        {LOCATION_TYPES.map((lt) => (
-          <FilterOption
-            key={lt}
-            value={lt}
-            label={lt}
-            name='locationTypes'
-            onAddFilter={setFiltersQuery}
-            onClearFilter={removeFiltersQuery}
-          />
-        ))}
+      <div className='mr-6 space-y-1.5'>
+        <p className='text-sm font-bold text-secondary-foreground'>
+          Location type
+        </p>
+        <div className='flex space-x-2'>
+          {LOCATION_TYPES.map((lt) => (
+            <FilterOption
+              key={lt}
+              value={lt}
+              label={lt}
+              name='location_types'
+              onAddFilter={setFiltersQuery}
+              onClearFilter={removeFiltersQuery}
+            />
+          ))}
+        </div>
       </div>
       <Button onClick={handleClearFiltersBtnClick}>Clear filters</Button>
     </div>
