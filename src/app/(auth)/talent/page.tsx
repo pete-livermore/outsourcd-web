@@ -1,3 +1,5 @@
+import { permanentRedirect } from 'next/navigation'
+
 export default function TalentLandingPage() {
-  return <div>Your dashboard</div>
+  permanentRedirect('/talent/jobs')
 }
