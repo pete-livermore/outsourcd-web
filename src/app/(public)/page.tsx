@@ -13,7 +13,7 @@ interface HeroSectionProps {
   data: Omit<PageSection, 'name'>
 }
 
-export function HeroSection({ data }: HeroSectionProps) {
+function HeroSection({ data }: HeroSectionProps) {
   const { content } = data
   const videoContent = content.find((cont) => cont.type === 'video')
   return (
