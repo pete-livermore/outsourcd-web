@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 
 import { buildRedirectUrl } from '@/lib/auth/redirect-url'
-import { getJobs } from '@/lib/jobs/jobs'
+import { jobsService } from '@/services/jobs'
 
 import { JobsPanel } from './_components'
 
@@ -22,7 +22,7 @@ export default async function JobsPage({
     },
     {},
   )
-  const jobsResult = await getJobs({
+  const jobsResult = await jobsService.getMany({
     filters,
     populate: { company: true },
   })

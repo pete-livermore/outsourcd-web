@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 
 import { Heading } from '@/components/ui/heading'
-import { getJob } from '@/lib/jobs/jobs'
+import { jobsService } from '@/services/jobs'
 
 import { CompanyInfo } from '../../_components'
 import { JobApplicationForm } from './_components/application-form'
@@ -12,7 +12,7 @@ export default async function JobApplicationPage({
   params: { id: string }
 }) {
   const id = parseInt(params.id)
-  const jobResult = await getJob(id, { company: true })
+  const jobResult = await jobsService.getOne(id, { company: true })
 
   if (jobResult.type === 'failure') {
     redirect('/error/500')
