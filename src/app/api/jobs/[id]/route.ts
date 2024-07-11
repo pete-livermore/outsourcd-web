@@ -1,4 +1,4 @@
-import { getJob } from '@/lib/jobs/jobs'
+import { jobsService } from '@/services/jobs'
 
 export async function GET(
   request: Request,
@@ -10,7 +10,7 @@ export async function GET(
     return
   }
 
-  const jobResult = await getJob(parseInt(id), { company: true })
+  const jobResult = await jobsService.getOne(parseInt(id), { company: true })
 
   if (jobResult.type === 'failure') {
     if (jobResult.failureReason === 'auth-error') {
