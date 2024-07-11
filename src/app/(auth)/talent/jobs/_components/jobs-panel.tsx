@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { Job } from '@/lib/jobs/jobs'
+import { Job } from '@/models/job'
 
 import { JobDetail } from './job-detail'
 import { JobFilters } from './job-filters'
@@ -30,7 +30,9 @@ export function JobsPanel({ jobs }: JobsProps) {
   }
   return (
     <>
-      <JobFilters />
+      <div className='mb-8 mt-10'>
+        <JobFilters />
+      </div>
       <div className='grid auto-rows-fr grid-cols-2 gap-8 lg:grid-cols-3 2xl:grid-cols-4'>
         {jobs.map((job) => (
           <Dialog onOpenChange={handleOpenChange} key={job.id}>

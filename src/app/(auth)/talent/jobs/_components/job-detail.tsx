@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { buttonVariants } from '@/components/ui/button'
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Spinner } from '@/components/ui/spinner'
-import { Job } from '@/lib/jobs/jobs'
+import { Job } from '@/models/job'
 import { capitaliseFirst } from '@/utils/data-transformation/capitalise-first'
 import { cn } from '@/utils/styles'
 
@@ -63,18 +63,11 @@ export function JobDetail({ id }: JobDetailProps) {
     return null
   }
 
-  const {
-    title,
-    company,
-    description,
-    salary,
-    start_date,
-    employment_type: employmentType,
-  } = job
+  const { title, company, description, salary, employmentType, startDate } = job
   const salaryPeriod = salaryPeriods[salary.period]
   const salaryRange = `${salary.value.min} - ${salary.value.max}`
   const salaryText = `${salaryRange} ${salary.currency} per ${salaryPeriod}`
-  const startDate = format(start_date, 'io MMM yy')
+  const formattedStartDate = format(startDate, 'io MMM yy')
 
   return (
     <div>
@@ -85,7 +78,7 @@ export function JobDetail({ id }: JobDetailProps) {
           <div className='mt-4 flex items-center gap-x-4'>
             <div className='flex items-center gap-x-1 text-xs'>
               <Calendar />
-              <p>{startDate}</p>
+              <p>{formattedStartDate}</p>
             </div>
             <div className='flex items-center gap-x-1 text-xs'>
               <Banknote />
