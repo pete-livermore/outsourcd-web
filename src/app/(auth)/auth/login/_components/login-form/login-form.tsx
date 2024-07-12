@@ -33,7 +33,7 @@ export function LoginForm({ className, redirectUrl }: LoginFormProps) {
   const { toast } = useToast()
 
   const hasFailedValidation =
-    state.result === 'failure' && state.failureReason === 'validation-error'
+    state.result === 'failure' && state.reason === 'validation-error'
 
   useEffect(() => {
     if (state.result === 'success') {
@@ -44,7 +44,7 @@ export function LoginForm({ className, redirectUrl }: LoginFormProps) {
       toast({
         variant: 'destructive',
         title: 'Login failed',
-        description: ERROR_MESSAGES[state.failureReason],
+        description: ERROR_MESSAGES[state.reason],
       })
     }
   }, [state, router, redirectUrl, toast])

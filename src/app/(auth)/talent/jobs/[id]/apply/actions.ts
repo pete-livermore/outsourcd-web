@@ -24,7 +24,7 @@ export async function sendJobApplication(
   if (!userId || !jobId) {
     return {
       result: 'failure',
-      failureReason: 'server-error',
+      reason: 'server-error',
     }
   }
 
@@ -38,7 +38,7 @@ export async function sendJobApplication(
   if (!validatedFields.success) {
     return {
       result: 'failure',
-      failureReason: 'validation-error',
+      reason: 'validation-error',
       errors: validatedFields.error.flatten().fieldErrors,
     }
   }
@@ -50,7 +50,7 @@ export async function sendJobApplication(
   if (!authToken) {
     return {
       result: 'failure',
-      failureReason: 'auth-error',
+      reason: 'auth-error',
     }
   }
 
@@ -78,20 +78,20 @@ export async function sendJobApplication(
     if (res.status === 401) {
       return {
         result: 'failure',
-        failureReason: 'auth-error',
+        reason: 'auth-error',
       }
     }
 
     if (res.status === 409) {
       return {
         result: 'failure',
-        failureReason: 'resource-conflict-error',
+        reason: 'resource-conflict-error',
       }
     }
 
     return {
       result: 'failure',
-      failureReason: 'server-error',
+      reason: 'server-error',
     }
   }
 

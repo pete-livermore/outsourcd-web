@@ -40,11 +40,11 @@ export function JobApplicationForm({ jobId }: JobApplicationFormProps) {
   }
 
   const hasValidationErrors =
-    state.result === 'failure' && state.failureReason === 'validation-error'
+    state.result === 'failure' && state.reason === 'validation-error'
 
   useEffect(() => {
     if (state.result === 'failure') {
-      switch (state.failureReason) {
+      switch (state.reason) {
         case 'auth-error': {
           router.push('/auth/login')
           break
