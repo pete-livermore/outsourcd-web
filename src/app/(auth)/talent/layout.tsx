@@ -1,11 +1,10 @@
 import { Briefcase, CircleUserRound } from 'lucide-react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { redirect } from 'next/navigation'
 
-import { env } from '@/config/env'
-import { buildRedirectUrl } from '@/lib/auth/redirect-url'
 import { getAuthToken } from '@/lib/auth/token'
+import { authRedirect, errorRedirect } from '@/lib/navigation/redirect'
+import { userService } from '@/services/user'
 
 import { AvatarDropdown } from './_components/avatar-dropdown'
 import { CompanyLogo } from './_components/company-logo'
@@ -34,24 +33,20 @@ export default async function TalentLayout({
   children: React.ReactNode
 }>) {
   const token = getAuthToken()
-  const redirectUrl = buildRedirectUrl()
 
   if (!token) {
-    return redirect(redirectUrl)
-  }
-  const res = await fetch(`${env.SERVER_URL}/api/v1/users/me`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  })
-
-  if (res.status === 401) {
-    return redirect(redirectUrl)
+    return authRedirect()
   }
 
-  const resData = await res.json()
-  const { first_name, last_name } = resData.data
-  const userInitials = first_name[0].toUpperCase() + last_name[0].toUpperCase()
+  const result = await userService.getAuthenticatedUser()
+
+  if (result.type === 'failure') {
+    return result.reason === 'auth-error' ? authRedirect() : errorRedirect()
+  }
+
+  const user = result.data
+  const userInitials =
+    user.firstName[0].toUpperCase() + user.lastName[0].toUpperCase()
 
   return (
     <div>
