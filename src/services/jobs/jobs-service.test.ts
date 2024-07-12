@@ -1,18 +1,16 @@
-import { ApiClient } from '@/lib/api/api-client'
-import { Job } from '@/models/job'
+import { IApiClient } from '@/lib/api/client/api-client'
 
 import { JobsService } from './jobs-service'
 
 describe('Jobs service', () => {
-  const mockServerUrl = 'http://test_url.com'
-  let mockApiClient: ApiClient
+  let mockApiClient: IApiClient
   let jobsService: JobsService
 
   beforeEach(() => {
     mockApiClient = {
       get: jest.fn(),
+      post: jest.fn(),
     }
-    process.env.SERVER_URL = mockServerUrl
     jobsService = new JobsService(mockApiClient)
   })
   it('should be defined', () => {
@@ -24,7 +22,7 @@ describe('Jobs service', () => {
       beforeEach(() => {
         jest.mocked(mockApiClient.get).mockResolvedValue({
           type: 'success',
-          data: new Job({
+          data: {
             id: 5,
             title: 'Assistant Manager',
             description: '',
@@ -36,7 +34,7 @@ describe('Jobs service', () => {
             },
             employment_type: 'permanent',
             start_date: new Date().toISOString(),
-          }),
+          },
         })
       })
       describe('and the API client returns valid data', () => {
