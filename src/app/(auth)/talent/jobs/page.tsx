@@ -1,6 +1,4 @@
-import { redirect } from 'next/navigation'
-
-import { buildRedirectUrl } from '@/lib/auth/redirect-url'
+import { authRedirect, errorRedirect } from '@/lib/navigation/redirect'
 import { jobsService } from '@/services/jobs'
 
 import { JobsPanel } from './_components'
@@ -14,7 +12,6 @@ export default async function JobsPage({
 }: {
   searchParams: { [key: string]: string }
 }) {
-  const redirectUrl = buildRedirectUrl()
   const filters = Object.entries(searchParams).reduce(
     (acc: Filters, [key, value]) => {
       acc[key] = JSON.parse(value)
@@ -28,14 +25,10 @@ export default async function JobsPage({
   })
 
   if (jobsResult.type === 'failure') {
-    if (jobsResult.failureReason === 'auth-error') {
-      redirect(redirectUrl)
-    } else {
-      redirect('/error/500')
-    }
+    return jobsResult.reason === 'auth-error' ? authRedirect() : errorRedirect()
   }
 
-  const { data: jobs } = jobsResult
+  const jobs = jobsResult.data
 
   return (
     <div>
