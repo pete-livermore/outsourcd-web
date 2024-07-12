@@ -1,4 +1,4 @@
-import { ResultType } from '@/types/result/result-type'
+import { ResultType } from '../result/result'
 
 type SubmissionFailureReason =
   | 'validation-error'
@@ -16,25 +16,25 @@ interface SuccessfulSubmissionState extends BaseFormState {
 
 interface BaseFailedSubmissionState {
   result: 'failure'
-  failureReason: SubmissionFailureReason
+  reason: SubmissionFailureReason
 }
 
 interface ValidationErrorState<T extends readonly string[]>
   extends BaseFailedSubmissionState {
-  failureReason: 'validation-error'
+  reason: 'validation-error'
   errors: { [key in T[number]]?: string[] }
 }
 
 interface AuthErrorState extends BaseFailedSubmissionState {
-  failureReason: 'auth-error'
+  reason: 'auth-error'
 }
 
 interface ResourceConflictErrorState extends BaseFailedSubmissionState {
-  failureReason: 'resource-conflict-error'
+  reason: 'resource-conflict-error'
 }
 
 interface ServerErrorState extends BaseFailedSubmissionState {
-  failureReason: 'server-error'
+  reason: 'server-error'
   errors?: unknown[]
 }
 
