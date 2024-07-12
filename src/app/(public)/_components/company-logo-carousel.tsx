@@ -11,7 +11,7 @@ const companies = [
 
 function AnimatedCompanyLogoList() {
   return (
-    <div className='animate-slide inline-block group-hover:[animation-play-state:paused]'>
+    <div className='inline-block animate-slide group-hover:[animation-play-state:paused]'>
       {companies.map((company) => (
         <CldImage
           src={company.logo}
