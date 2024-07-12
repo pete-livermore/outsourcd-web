@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 import { z } from 'zod'
 
 import { env } from '@/config/env'
+import { authService } from '@/services/auth'
 
 import { LoginFormState } from './login/_components/login-form'
 
@@ -29,37 +30,23 @@ export async function login(
   if (!validatedFields.success) {
     return {
       result: 'failure',
-      failureReason: 'validation-error',
+      reason: 'validation-error',
       errors: validatedFields.error.flatten().fieldErrors,
     }
   }
 
-  const res = await fetch(`${env.SERVER_URL}/v1/auth/login`, {
-    method: 'POST',
-    body: JSON.stringify(validatedFields.data),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })
+  const result = await authService.login(validatedFields.data)
 
-  if (!res.ok) {
-    if (res.status === 401) {
-      return {
-        result: 'failure',
-        failureReason: 'auth-error',
-      }
-    }
+  if (result.type === 'failure') {
     return {
       result: 'failure',
-      failureReason: 'server-error',
+      reason: result.reason,
     }
   }
 
-  const resBody = await res.json()
-
   const authCookie = {
     name: env.AUTH_COOKIE_NAME,
-    value: resBody.token,
+    value: result.data.token,
     httpOnly: true,
     path: '/',
   }
@@ -68,7 +55,7 @@ export async function login(
 
   const userCookie = {
     name: 'user',
-    value: resBody.user.id,
+    value: String(result.data.user),
     path: '/talent',
   }
 
