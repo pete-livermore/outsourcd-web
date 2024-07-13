@@ -15,30 +15,38 @@ import { cn } from '@/utils/styles'
 
 interface DatePickerProps {
   placeholder?: string
+  onSelectDate: (date?: Date) => void
+  selectedDate?: Date
 }
 
-export function DatePicker({ placeholder = 'Pick a date' }: DatePickerProps) {
-  const [date, setDate] = React.useState<Date>()
-
+export function DatePicker({
+  placeholder = 'Pick a date',
+  selectedDate,
+  onSelectDate,
+}: DatePickerProps) {
   return (
     <Popover>
       <PopoverTrigger asChild>
         <Button
           variant={'outline'}
           className={cn(
-            'w-[280px] justify-start text-left font-normal',
-            !date && 'text-muted-foreground',
+            'w-[280px] justify-start text-left font-normal text-secondary-foreground',
+            !selectedDate && 'text-muted-foreground',
           )}
         >
           <CalendarIcon className='mr-2 size-4' />
-          {date ? format(date, 'PPP') : <span>{placeholder}</span>}
+          {selectedDate ? (
+            format(selectedDate, 'PPP')
+          ) : (
+            <span>{placeholder}</span>
+          )}
         </Button>
       </PopoverTrigger>
       <PopoverContent className='w-auto p-0'>
         <Calendar
           mode='single'
-          selected={date}
-          onSelect={setDate}
+          selected={selectedDate}
+          onSelect={onSelectDate}
           initialFocus
         />
       </PopoverContent>
