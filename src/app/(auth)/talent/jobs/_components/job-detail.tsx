@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { buttonVariants } from '@/components/ui/button'
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Spinner } from '@/components/ui/spinner'
-import { Job } from '@/models/job'
+import { Job } from '@/services/jobs/jobs-service'
 import { capitaliseFirst } from '@/utils/data-transformation/capitalise-first'
 import { cn } from '@/utils/styles'
 
