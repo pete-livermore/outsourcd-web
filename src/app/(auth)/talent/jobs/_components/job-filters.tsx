@@ -64,6 +64,12 @@ const FilterOption = ({
 
 export function JobFilters() {
   const searchParams = useSearchParams()
+  const startDateParam = searchParams.get('start_date')
+  const startDateObject = startDateParam
+    ? JSON.parse(startDateParam)
+    : undefined
+  const startDateValue = startDateObject?.value
+  const selectedDate = startDateValue ? new Date(startDateValue) : undefined
 
   function handleClearFiltersBtnClick() {
     searchParams.clear()
@@ -109,10 +115,31 @@ export function JobFilters() {
     [searchParams],
   )
 
+  const setStartDateQuery = useCallback(
+    (date?: Date) => {
+      if (!date) return
+
+      const queryValue = {
+        operator: 'after',
+        value: date.toISOString(),
+      }
+      searchParams.set('start_date', JSON.stringify(queryValue))
+    },
+    [searchParams],
+  )
+
   return (
-    <div className='mb-6 flex items-center gap-x-4 p-6'>
-      {/* <Slider defaultValue={[50]} max={100} step={1} className='w-1/5' />
-      <DatePicker /> */}
+    <div className='flex items-start gap-x-6'>
+      {/* <Slider defaultValue={[50]} max={100} step={1} className='w-1/5' /> */}
+      <div>
+        <p className='text-sm font-bold text-secondary-foreground'>
+          Earliest start date
+        </p>
+        <DatePicker
+          onSelectDate={setStartDateQuery}
+          selectedDate={selectedDate}
+        />
+      </div>
       <div className='mr-6 space-y-1.5'>
         <p className='text-sm font-bold text-secondary-foreground'>
           Employment type
@@ -130,7 +157,7 @@ export function JobFilters() {
           ))}
         </div>
       </div>
-      <div className='mr-6 space-y-1.5'>
+      <div className='mr-4 space-y-1.5'>
         <p className='text-sm font-bold text-secondary-foreground'>
           Location type
         </p>
