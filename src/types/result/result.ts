@@ -6,9 +6,9 @@ interface BaseResult {
   type: ResultType
 }
 
-interface SuccessResult<T> extends BaseResult {
+interface SuccessResult<T = void> extends BaseResult {
   type: 'success'
-  data: T extends void ? undefined : T
+  data: T extends void ? null : T
 }
 
 interface FailureResult extends BaseResult {
