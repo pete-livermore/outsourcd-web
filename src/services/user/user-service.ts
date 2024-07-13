@@ -17,12 +17,18 @@ interface AuthenticatedUser {
   lastName: string
 }
 
+export interface UpdateUserDto {
+  email: string
+  first_name: string
+  last_name: string
+}
+
 export class UserService {
   constructor(private readonly apiClient: ApiClient) {
     this.apiClient = apiClient
   }
 
-  private parseDto(dto: AuthenticatedUserDto) {
+  private parseDto(dto: AuthenticatedUserDto): AuthenticatedUser {
     return {
       id: dto.id,
       email: dto.email,
@@ -33,11 +39,34 @@ export class UserService {
 
   async getAuthenticatedUser(): Promise<Result<AuthenticatedUser>> {
     try {
-      const data =
-        await this.apiClient.get<AuthenticatedUserDto>('/api/v1/users/me')
+      const { data } = await this.apiClient.get<{ data: AuthenticatedUserDto }>(
+        '/api/v1/users/me',
+      )
       return {
         type: 'success',
         data: this.parseDto(data),
+      }
+    } catch (e) {
+      logger.error(e)
+      if (e instanceof HTTPError && e.status === 401) {
+        return {
+          type: 'failure',
+          reason: 'auth-error',
+        }
+      }
+      return {
+        type: 'failure',
+        reason: 'server-error',
+      }
+    }
+  }
+
+  async update(userId: number, update: UpdateUserDto): Promise<Result> {
+    try {
+      await this.apiClient.put(`/api/v1/users/${userId}`, update)
+      return {
+        type: 'success',
+        data: null,
       }
     } catch (e) {
       logger.error(e)

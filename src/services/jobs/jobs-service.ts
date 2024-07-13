@@ -77,7 +77,7 @@ export class JobsService {
     const apiPath = basePath + (query ? `?${query}` : '')
 
     try {
-      const data = await this.apiClient.get<JobDto>(apiPath)
+      const { data } = await this.apiClient.get<{ data: JobDto }>(apiPath)
       return {
         type: 'success',
         data: this.parseDto(data),
@@ -103,7 +103,7 @@ export class JobsService {
     const apiPath = `${this.jobsApiPath}?${query}`
 
     try {
-      const data = await this.apiClient.get<JobDto[]>(apiPath)
+      const { data } = await this.apiClient.get<{ data: JobDto[] }>(apiPath)
       return {
         type: 'success',
         data: data.map((job) => this.parseDto(job)),
