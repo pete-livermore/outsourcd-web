@@ -46,6 +46,10 @@ export class ApiClient implements IApiClient {
     })
   }
 
+  authenticate(token: string) {
+    this.authHeader['Authorization'] = `Bearer ${token}`
+  }
+
   async get<T>(path: string): Promise<T> {
     const res = await this.makeRequest(path)
 
