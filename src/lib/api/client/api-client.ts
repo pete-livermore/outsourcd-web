@@ -8,6 +8,7 @@ type JSONResponse<T> = {
 export interface IApiClient {
   get<T>(urlPath: string): Promise<T>
   post<T>(urlPath: string, data: unknown): Promise<T>
+  put<T>(urlPath: string, data: unknown): Promise<T>
 }
 
 interface Deps {
@@ -30,12 +31,23 @@ export class ApiClient implements IApiClient {
     }
   }
 
-  async get<T>(path: string): Promise<T> {
-    const res = await fetch(this.url + path, {
-      headers: {
-        ...this.authHeader,
-      },
+  private mergeHeaders(options?: RequestInit): HeadersInit {
+    return {
+      ...options?.headers,
+      ...this.authHeader,
+      'Content-Type': 'application/json',
+    }
+  }
+
+  private async makeRequest(path: string, options?: RequestInit) {
+    return fetch(this.url + path, {
+      ...options,
+      headers: this.mergeHeaders(),
     })
+  }
+
+  async get<T>(path: string): Promise<T> {
+    const res = await this.makeRequest(path)
 
     const responseBody: JSONResponse<T> = await res.json()
 
@@ -43,20 +55,33 @@ export class ApiClient implements IApiClient {
       throw new HTTPError(res.status, res.statusText, responseBody)
     }
 
-    if (!responseBody.data) {
-      throw new HTTPError(500, 'Internal Server Error', responseBody)
-    }
-
-    return responseBody.data
+    return responseBody as T
   }
 
   async post<T>(path: string, data: unknown): Promise<T> {
-    const res = await fetch(this.url + path, {
+    const res = await this.makeRequest(path, {
       method: 'POST',
       body: JSON.stringify(data),
       headers: {
         'Content-Type': 'application/json',
-        ...this.authHeader,
+      },
+    })
+
+    const responseBody = await res.json()
+
+    if (!res.ok) {
+      throw new HTTPError(res.status, res.statusText, responseBody)
+    }
+
+    return responseBody as T
+  }
+
+  async put<T>(path: string, data: unknown): Promise<T> {
+    const res = await this.makeRequest(path, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json',
       },
     })
 
