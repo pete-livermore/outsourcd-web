@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { Job } from '@/models/job'
+import { Job } from '@/services/jobs/jobs-service'
 
 import { JobDetail } from './job-detail'
 import { JobFilters } from './job-filters'
