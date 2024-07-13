@@ -6,9 +6,10 @@ import { z } from 'zod'
 
 import { env } from '@/config/env'
 import { getAuthToken } from '@/lib/auth/token'
+import { userService } from '@/services/user'
+import { UpdateUserDto } from '@/services/user/user-service'
 import { logger } from '@/utils/logging/logger'
 
-import { getAuthenticatedUser } from '../../auth/loaders'
 import { ProfileFormState } from './_components/profile-form'
 
 async function uploadUserProfileImage(blob: Blob, userId: number) {
@@ -63,12 +64,13 @@ export async function updateUser(
   _prevState: ProfileFormState,
   formData: FormData,
 ): Promise<ProfileFormState> {
-  const token = getAuthToken()
-  const user = await getAuthenticatedUser()
+  const result = await userService.getAuthenticatedUser()
 
-  if (!user) {
+  if (result.type === 'failure') {
     return { result: 'failure' }
   }
+
+  const user = result.data
 
   const profileImage = additionalFormData.get('profileImage') as Blob
 
@@ -101,17 +103,15 @@ export async function updateUser(
     }
   }
 
-  const res = await fetch(`${env.SERVER_URL}/api/v1/users/${user.id}`, {
-    method: 'PUT',
-    body: JSON.stringify(updateUserDto),
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-  })
+  const updateResult = await userService.update(
+    user.id,
+    updateUserDto as UpdateUserDto,
+  )
 
-  if (!res.ok) {
-    logger.error(`user ${user.id} not updated (received status ${res.status})`)
+  if (updateResult.type === 'failure') {
+    const failureReason =
+      updateResult.reason === 'auth-error' ? 'authentication' : 'server'
+    logger.error(`user ${user.id} not updated due to ${failureReason} error`)
     return { result: 'failure' }
   }
 
