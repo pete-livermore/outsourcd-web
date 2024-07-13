@@ -65,11 +65,9 @@ const FilterOption = ({
 export function JobFilters() {
   const searchParams = useSearchParams()
   const startDateParam = searchParams.get('start_date')
-  const startDateObject = startDateParam
-    ? JSON.parse(startDateParam)
+  const selectedDate = startDateParam
+    ? new Date(JSON.parse(startDateParam).value)
     : undefined
-  const startDateValue = startDateObject?.value
-  const selectedDate = startDateValue ? new Date(startDateValue) : undefined
 
   function handleClearFiltersBtnClick() {
     searchParams.clear()
