@@ -102,12 +102,12 @@ export function EditProfileImage({ onEditComplete }: EditProfileImageProps) {
       </DialogContent>
       <div className='flex w-full justify-center'>
         <div>
-          <div>
+          <div className='relative h-72 w-full'>
             <Image
-              src='/assets/images/test.jpg'
-              alt='test'
-              width={300}
-              height={300}
+              src='/assets/images/profile-placeholder.png'
+              alt='profile placeholder'
+              fill
+              objectFit='cover'
             />
           </div>
           <div className='mt-2'>
