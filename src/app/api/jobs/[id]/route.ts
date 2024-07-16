@@ -1,4 +1,4 @@
-import { apiClient } from '@/lib/api/client'
+import { ApiClient } from '@/lib/api/client/api-client'
 import { getAuthToken } from '@/lib/auth/token'
 import { generateErrResponse } from '@/lib/response/generate-error-response'
 import { JobsService } from '@/services/jobs/jobs-service'
@@ -19,9 +19,7 @@ export async function GET(
     return
   }
 
-  apiClient.authenticate(token)
-  const jobsService = new JobsService(apiClient)
-
+  const jobsService = JobsService.getInstance(ApiClient.getInstance(token))
   const jobResult = await jobsService.getOne(parseInt(id), { company: true })
 
   if (jobResult.type === 'failure') {

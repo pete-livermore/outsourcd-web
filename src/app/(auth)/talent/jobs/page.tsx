@@ -1,5 +1,7 @@
+import { ApiClient } from '@/lib/api/client/api-client'
+import { getAuthToken } from '@/lib/auth/token'
 import { authRedirect, errorRedirect } from '@/lib/navigation/redirect'
-import { jobsService } from '@/services/jobs'
+import { JobsService } from '@/services/jobs/jobs-service'
 
 import { JobsPanel } from './_components'
 
@@ -12,6 +14,12 @@ export default async function JobsPage({
 }: {
   searchParams: { [key: string]: string }
 }) {
+  const token = getAuthToken()
+
+  if (!token) {
+    return authRedirect()
+  }
+
   const filters = Object.entries(searchParams).reduce(
     (acc: Filters, [key, value]) => {
       acc[key] = JSON.parse(value)
@@ -19,6 +27,7 @@ export default async function JobsPage({
     },
     {},
   )
+  const jobsService = JobsService.getInstance(ApiClient.getInstance(token))
   const jobsResult = await jobsService.getMany({
     filters,
     populate: { company: true },
