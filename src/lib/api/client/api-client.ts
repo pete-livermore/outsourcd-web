@@ -41,9 +41,9 @@ export class ApiClient implements IApiClient {
     return ApiClient.instance
   }
 
-  private mergeHeaders(options?: RequestInit): HeadersInit {
+  private mergeHeaders(customHeaders?: HeadersInit): HeadersInit {
     return {
-      ...options?.headers,
+      ...customHeaders,
       ...this.authHeader,
       'Content-Type': 'application/json',
     }
@@ -52,7 +52,7 @@ export class ApiClient implements IApiClient {
   private async makeRequest(path: string, options?: RequestInit) {
     return fetch(this.url + path, {
       ...options,
-      headers: this.mergeHeaders(),
+      headers: this.mergeHeaders(options?.headers),
     })
   }
 
