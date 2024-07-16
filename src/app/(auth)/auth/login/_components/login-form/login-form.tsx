@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useFormState, useFormStatus } from 'react-dom'
 
 import { login } from '@/app/(auth)/auth/actions'
@@ -21,36 +21,34 @@ interface LoginFormProps extends React.HTMLAttributes<HTMLFormElement> {
   redirectUrl?: string
 }
 
-const ERROR_MESSAGES: { [key: string]: string } = {
-  'auth-error': 'The provided credentials are invalid',
-  'server-error': 'There was an unknown error',
-}
-
 export function LoginForm({ className, redirectUrl }: LoginFormProps) {
   const { pending } = useFormStatus()
   const router = useRouter()
-  const [state, formAction] = useFormState(login, {})
+  const [state, formAction] = useFormState(login, null)
   const { toast } = useToast()
+  const formRef = useRef<HTMLFormElement>(null)
 
-  const hasFailedValidation =
-    state.result === 'failure' && state.reason === 'validation-error'
+  const hasValidationErrors = state?.type === 'failure' && !!state.errors
 
   useEffect(() => {
-    if (state.result === 'success') {
-      router.push(redirectUrl ?? '/')
+    if (state) {
+      if (state.type === 'success') {
+        router.push(redirectUrl ?? '/')
+      } else if (state.type === 'failure') {
+        toast({
+          variant: 'destructive',
+          title: 'Login failed',
+          description: state.message,
+        })
+        if (formRef.current) {
+          formRef.current.reset()
+        }
+      }
     }
-
-    if (state.result === 'failure') {
-      toast({
-        variant: 'destructive',
-        title: 'Login failed',
-        description: ERROR_MESSAGES[state.reason],
-      })
-    }
-  }, [state, router, redirectUrl, toast])
+  }, [state, router, redirectUrl, toast, pending])
 
   return (
-    <form action={formAction} className={cn(className)}>
+    <form action={formAction} className={cn(className)} ref={formRef}>
       <div className='flex flex-col'>
         <div className='flex flex-col space-y-8'>
           <div>
@@ -65,8 +63,8 @@ export function LoginForm({ className, redirectUrl }: LoginFormProps) {
               placeholder='Enter your email'
               autoComplete='email'
             />
-            {hasFailedValidation && (
-              <FormFieldErrorMessage errors={state.errors.email} />
+            {hasValidationErrors && (
+              <FormFieldErrorMessage errors={state.errors?.email} />
             )}
           </div>
           <div>
@@ -80,8 +78,8 @@ export function LoginForm({ className, redirectUrl }: LoginFormProps) {
               placeholder='Enter your password'
               autoComplete='current-password'
             />
-            {hasFailedValidation && (
-              <FormFieldErrorMessage errors={state.errors.password} />
+            {hasValidationErrors && (
+              <FormFieldErrorMessage errors={state.errors?.password} />
             )}
           </div>
         </div>
