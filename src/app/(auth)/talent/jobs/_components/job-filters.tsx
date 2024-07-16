@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DatePicker } from '@/components/ui/date-picker'
 import { Label } from '@/components/ui/label'
-import { Slider } from '@/components/ui/slider'
 import { useSearchParams } from '@/hooks/search/use-search-params'
 
 type FilterName = 'employment_types' | 'location_types'
@@ -127,10 +126,10 @@ export function JobFilters() {
   )
 
   return (
-    <div className='flex items-start gap-x-6'>
+    <div className='flex items-stretch gap-x-6'>
       {/* <Slider defaultValue={[50]} max={100} step={1} className='w-1/5' /> */}
       <div>
-        <p className='text-sm font-bold text-secondary-foreground'>
+        <p className='mb-1.5 h-5 text-sm font-bold text-secondary-foreground'>
           Earliest start date
         </p>
         <DatePicker
@@ -138,41 +137,47 @@ export function JobFilters() {
           selectedDate={selectedDate}
         />
       </div>
-      <div className='mr-6 space-y-1.5'>
-        <p className='text-sm font-bold text-secondary-foreground'>
+      <div className='mr-6 flex flex-col'>
+        <p className='h-5 text-sm font-bold text-secondary-foreground'>
           Employment type
         </p>
-        <div className='flex space-x-2'>
-          {EMPLOYMENT_TYPES.map((et) => (
-            <FilterOption
-              key={et}
-              value={et}
-              label={et}
-              name='employment_types'
-              onAddFilter={setFiltersQuery}
-              onClearFilter={removeFiltersQuery}
-            />
-          ))}
+        <div className='flex grow flex-col justify-center'>
+          <div className='flex space-x-2'>
+            {EMPLOYMENT_TYPES.map((et) => (
+              <FilterOption
+                key={et}
+                value={et}
+                label={et}
+                name='employment_types'
+                onAddFilter={setFiltersQuery}
+                onClearFilter={removeFiltersQuery}
+              />
+            ))}
+          </div>
         </div>
       </div>
-      <div className='mr-4 space-y-1.5'>
-        <p className='text-sm font-bold text-secondary-foreground'>
+      <div className='mr-4 flex flex-col'>
+        <p className='h-5 text-sm font-bold text-secondary-foreground'>
           Location type
         </p>
-        <div className='flex space-x-2'>
-          {LOCATION_TYPES.map((lt) => (
-            <FilterOption
-              key={lt}
-              value={lt}
-              label={lt}
-              name='location_types'
-              onAddFilter={setFiltersQuery}
-              onClearFilter={removeFiltersQuery}
-            />
-          ))}
+        <div className='flex grow flex-col justify-center'>
+          <div className='flex space-x-2'>
+            {LOCATION_TYPES.map((lt) => (
+              <FilterOption
+                key={lt}
+                value={lt}
+                label={lt}
+                name='location_types'
+                onAddFilter={setFiltersQuery}
+                onClearFilter={removeFiltersQuery}
+              />
+            ))}
+          </div>
         </div>
       </div>
-      <Button onClick={handleClearFiltersBtnClick}>Clear filters</Button>
+      <div className='flex flex-col justify-center pt-3'>
+        <Button onClick={handleClearFiltersBtnClick}>Clear filters</Button>
+      </div>
     </div>
   )
 }
