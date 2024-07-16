@@ -5,19 +5,30 @@ import { redirect } from 'next/navigation'
 import { z } from 'zod'
 
 import { env } from '@/config/env'
-import { authService } from '@/services/auth'
+import { SERVER_ERROR_MESSAGE } from '@/constants/errors/messages/server-error-message'
+import { VALIDATION_ERROR_MESSAGE } from '@/constants/errors/messages/validation-error-message'
+import { ApiClient } from '@/lib/api/client/api-client'
+import { AuthService } from '@/services/auth/auth-service'
 
 import { LoginFormState } from './login/_components/login-form'
 
+const AUTH_ERROR_MESSAGE = 'The provided credentials are invalid'
+
 const loginSchema = z.object({
-  email: z.string({
-    invalid_type_error: 'Invalid Email',
-  }),
-  password: z.string().min(1),
+  email: z
+    .string({
+      invalid_type_error: 'Invalid Email',
+    })
+    .min(1, 'Email must not be empty'),
+  password: z
+    .string({
+      invalid_type_error: 'Invalid password',
+    })
+    .min(1, 'Password must not be empty'),
 })
 
 export async function login(
-  _prevState: LoginFormState,
+  _prevState: LoginFormState | null,
   formData: FormData,
 ): Promise<LoginFormState> {
   const rawFormData = {
@@ -29,18 +40,21 @@ export async function login(
 
   if (!validatedFields.success) {
     return {
-      result: 'failure',
-      reason: 'validation-error',
+      type: 'failure',
+      message: VALIDATION_ERROR_MESSAGE,
       errors: validatedFields.error.flatten().fieldErrors,
     }
   }
 
+  const authService = AuthService.getInstance(ApiClient.getInstance())
   const result = await authService.login(validatedFields.data)
 
   if (result.type === 'failure') {
+    const message =
+      result.reason === 'auth-error' ? AUTH_ERROR_MESSAGE : SERVER_ERROR_MESSAGE
     return {
-      result: 'failure',
-      reason: result.reason,
+      type: 'failure',
+      message,
     }
   }
 
@@ -61,7 +75,7 @@ export async function login(
 
   cookies().set(userCookie)
 
-  return { result: 'success' }
+  return { type: 'success', message: 'Successfully authenticated' }
 }
 
 export async function logout() {
