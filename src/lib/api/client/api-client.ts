@@ -1,3 +1,4 @@
+import { env } from '@/config/env'
 import { HTTPError } from '@/errors/http-error'
 
 type JSONResponse<T> = {
@@ -11,24 +12,33 @@ export interface IApiClient {
   put<T>(urlPath: string, data: unknown): Promise<T>
 }
 
-interface Deps {
-  url: string
-  token?: string
-}
-
 interface AuthHeader {
   Authorization?: string
 }
 
 export class ApiClient implements IApiClient {
+  private static instance: ApiClient | null = null
   private readonly url: string
   private authHeader: AuthHeader = {}
 
-  constructor({ url, token }: Deps) {
-    this.url = url
+  private constructor(token?: string) {
+    this.url = env.SERVER_URL
     if (token) {
       this.authHeader['Authorization'] = `Bearer ${token}`
     }
+  }
+
+  private authenticate(token: string) {
+    this.authHeader['Authorization'] = `Bearer ${token}`
+  }
+
+  public static getInstance(token?: string): ApiClient {
+    if (!ApiClient.instance) {
+      ApiClient.instance = new ApiClient(token)
+    } else if (token) {
+      ApiClient.instance.authenticate(token)
+    }
+    return ApiClient.instance
   }
 
   private mergeHeaders(options?: RequestInit): HeadersInit {
@@ -44,10 +54,6 @@ export class ApiClient implements IApiClient {
       ...options,
       headers: this.mergeHeaders(),
     })
-  }
-
-  authenticate(token: string) {
-    this.authHeader['Authorization'] = `Bearer ${token}`
   }
 
   async get<T>(path: string): Promise<T> {
