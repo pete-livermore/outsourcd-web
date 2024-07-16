@@ -1,17 +1,18 @@
-export type ResultType = 'success' | 'failure'
+import { ApiError } from '../api/error'
+import { ResultType } from './result-type'
 
-type FailureReason = 'auth-error' | 'server-error'
+type FailureReason = ApiError
 
 interface BaseResult {
   type: ResultType
 }
 
-interface SuccessResult<T = void> extends BaseResult {
+export interface SuccessResult<T = void> extends BaseResult {
   type: 'success'
   data: T extends void ? null : T
 }
 
-interface FailureResult extends BaseResult {
+export interface FailureResult extends BaseResult {
   type: 'failure'
   reason: FailureReason
   errors?: string[]
