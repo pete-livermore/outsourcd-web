@@ -1,5 +1,5 @@
 import { HTTPError } from '@/errors/http-error'
-import { ApiClient } from '@/lib/api/client/api-client'
+import { IApiClient } from '@/lib/api/client/api-client'
 import { Result } from '@/types/result/result'
 import { logger } from '@/utils/logging/logger'
 
@@ -21,8 +21,17 @@ interface AuthenticatedUserData {
 }
 
 export class AuthService {
-  constructor(private readonly apiClient: ApiClient) {
+  private static instance: AuthService
+
+  private constructor(private readonly apiClient: IApiClient) {
     this.apiClient = apiClient
+  }
+
+  public static getInstance(apiClient: IApiClient) {
+    if (!AuthService.instance) {
+      AuthService.instance = new AuthService(apiClient)
+    }
+    return AuthService.instance
   }
 
   private parseDto({ token, user }: LoginResponseDto) {
