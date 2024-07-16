@@ -21,4 +21,5 @@ jobs:
           CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
           CLOUDINARY_FOLDER_NAME: ${{ secrets.CLOUDINARY_FOLDER_NAME }}
           NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_FOLDER_NAME}}
+          DATABASE_URL: ${{secrets.DATABASE_URL}}
           SERVER_URL: ${{ vars.SERVER_URL }}
