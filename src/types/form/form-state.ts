@@ -1,50 +1,21 @@
-import { ResultType } from '../result/result'
-
-type SubmissionFailureReason =
-  | 'validation-error'
-  | 'auth-error'
-  | 'server-error'
-  | 'resource-conflict-error'
+type FormStateType = 'success' | 'failure'
 
 interface BaseFormState {
-  result: ResultType
+  type: FormStateType
+  message?: string
 }
 
-interface SuccessfulSubmissionState extends BaseFormState {
-  result: 'success'
+interface SuccessFormState extends BaseFormState {
+  type: 'success'
+  message?: string
 }
 
-interface BaseFailedSubmissionState {
-  result: 'failure'
-  reason: SubmissionFailureReason
+interface FailureFormState<T extends readonly string[]> extends BaseFormState {
+  type: 'failure'
+  message: string
+  errors?: { [key in T[number]]?: string[] }
 }
-
-interface ValidationErrorState<T extends readonly string[]>
-  extends BaseFailedSubmissionState {
-  reason: 'validation-error'
-  errors: { [key in T[number]]?: string[] }
-}
-
-interface AuthErrorState extends BaseFailedSubmissionState {
-  reason: 'auth-error'
-}
-
-interface ResourceConflictErrorState extends BaseFailedSubmissionState {
-  reason: 'resource-conflict-error'
-}
-
-interface ServerErrorState extends BaseFailedSubmissionState {
-  reason: 'server-error'
-  errors?: unknown[]
-}
-
-type FailedSubmissionState<T extends readonly string[]> =
-  | ValidationErrorState<T>
-  | AuthErrorState
-  | ServerErrorState
-  | ResourceConflictErrorState
 
 export type FormState<T extends readonly string[]> =
-  | SuccessfulSubmissionState
-  | FailedSubmissionState<T>
-  | Record<string, never>
+  | SuccessFormState
+  | FailureFormState<T>
