@@ -3,11 +3,18 @@
 import { cookies } from 'next/headers'
 import { z } from 'zod'
 
-import { env } from '@/config/env'
+import { SERVER_ERROR_MESSAGE } from '@/constants/errors/messages/server-error-message'
+import { VALIDATION_ERROR_MESSAGE } from '@/constants/errors/messages/validation-error-message'
+import { ApiClient } from '@/lib/api/client/api-client'
 import { getAuthToken } from '@/lib/auth/token'
+import { authRedirect } from '@/lib/navigation/redirect'
+import { JobApplicationsService } from '@/services/jobs/applications/job-applications-service'
 import { textFormFieldSchema } from '@/utils/validation/form'
 
 import { JobApplicationFormState } from './_components/application-form'
+
+const RESOURCE_CONFLICT_MESSAGE =
+  'You have already applied for this job! You can access the status of your application in your dashboard'
 
 const jobApplicationSchema = z.object({
   coverLetter: textFormFieldSchema({ nullable: true }),
@@ -16,84 +23,72 @@ const jobApplicationSchema = z.object({
 
 export async function sendJobApplication(
   jobId: number,
-  _prevState: JobApplicationFormState,
+  _prevState: JobApplicationFormState | null,
   formData: FormData,
 ): Promise<JobApplicationFormState> {
   const userId = cookies().get('user')?.value
 
-  if (!userId || !jobId) {
+  if (!userId) {
     return {
-      result: 'failure',
-      reason: 'server-error',
+      type: 'failure',
+      message: 'No valid user Id',
     }
   }
 
   const rawFormData = {
     coverLetter: formData.get('cover_letter'),
     minSalaryExpectation: formData.get('min_salary_expectation'),
+    jobId,
   }
 
   const validatedFields = jobApplicationSchema.safeParse(rawFormData)
 
   if (!validatedFields.success) {
     return {
-      result: 'failure',
-      reason: 'validation-error',
+      type: 'failure',
+      message: VALIDATION_ERROR_MESSAGE,
       errors: validatedFields.error.flatten().fieldErrors,
     }
   }
 
   const { minSalaryExpectation, coverLetter } = validatedFields.data
 
-  const authToken = getAuthToken()
+  const token = getAuthToken()
 
-  if (!authToken) {
-    return {
-      result: 'failure',
-      reason: 'auth-error',
-    }
+  if (!token) {
+    authRedirect()
   }
 
   const jobApplicationDto = {
-    job_id: jobId,
-    user_id: parseInt(userId),
-    min_salary_expectation: parseInt(minSalaryExpectation),
-    cover_letter: coverLetter,
+    jobId,
+    userId: parseInt(userId),
+    minSalaryExpectation: parseInt(minSalaryExpectation),
+    coverLetter,
     status: 'pending',
   }
 
-  const res = await fetch(
-    `${env.SERVER_URL}/api/v1/jobs/${jobId}/applications`,
-    {
-      method: 'POST',
-      body: JSON.stringify(jobApplicationDto),
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${authToken}`,
-      },
-    },
+  const jobApplicationsService = JobApplicationsService.getInstance(
+    ApiClient.getInstance(token),
   )
+  const jobUpdateResult = await jobApplicationsService.create(jobApplicationDto)
 
-  if (!res.ok) {
-    if (res.status === 401) {
-      return {
-        result: 'failure',
-        reason: 'auth-error',
-      }
+  if (jobUpdateResult.type === 'failure') {
+    if (jobUpdateResult.reason === 'auth-error') {
+      authRedirect()
     }
 
-    if (res.status === 409) {
+    if (jobUpdateResult.reason === 'resource-conflict-error') {
       return {
-        result: 'failure',
-        reason: 'resource-conflict-error',
+        type: 'failure',
+        message: RESOURCE_CONFLICT_MESSAGE,
       }
     }
 
     return {
-      result: 'failure',
-      reason: 'server-error',
+      type: 'failure',
+      message: SERVER_ERROR_MESSAGE,
     }
   }
 
-  return { result: 'success' }
+  return { type: 'success', message: 'Check your applications to view status' }
 }
