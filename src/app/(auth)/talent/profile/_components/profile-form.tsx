@@ -22,28 +22,21 @@ import {
 } from '@/components/ui/popover'
 import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/components/ui/toast'
+import { FormState } from '@/types/form/form-state'
 import { cn } from '@/utils/styles'
 
 import { updateUser } from '../actions'
 import { EditProfileImage } from './edit-profile-image'
 
-interface FormErrors {
-  firstName?: string[]
-  lastName?: string[]
-  password?: string[]
-  biography?: string[]
-}
+const formFields = [
+  'password',
+  'biography',
+  'firstName',
+  'lastName',
+  'profileImage',
+] as const
 
-export type ProfileFormState =
-  | {
-      errors: FormErrors
-      result?: undefined
-    }
-  | { errors?: undefined; result: 'success' | 'failure' }
-
-const INITIAL_STATE: ProfileFormState = {
-  errors: { password: [], biography: [] },
-}
+export type ProfileFormState = FormState<typeof formFields>
 
 interface ProfileFormProps {
   firstName: string
@@ -57,9 +50,8 @@ export function ProfileForm({ firstName, lastName, email }: ProfileFormProps) {
   const imageFormData = new FormData()
   const [open, setOpen] = useState(false)
   const updateUserWithImage = updateUser.bind(null, imageFormData)
-  const [state, formAction] = useFormState(updateUserWithImage, INITIAL_STATE)
+  const [state, formAction] = useFormState(updateUserWithImage, null)
   const { toast } = useToast()
-  const errors = state?.errors
 
   const userEmails = [{ value: email }]
 
@@ -74,25 +66,38 @@ export function ProfileForm({ firstName, lastName, email }: ProfileFormProps) {
   }
 
   useEffect(() => {
-    if (state.result === 'success') {
-      toast({
-        title: 'User updated succesfully',
-      })
+    if (state) {
+      if (state.type === 'success') {
+        toast({
+          title: 'Succesfully updated profile',
+        })
+      } else if (state.type === 'failure') {
+        toast({
+          title: 'Profile update failed',
+          description: state.message,
+        })
+      }
     }
   }, [state, firstName, toast])
+
+  const hasValidationErrors = state?.type === 'failure' && !!state.errors
 
   return (
     <form className='grid grid-cols-2' action={formAction}>
       <div className='flex max-w-lg flex-col space-y-6'>
         <div>
-          <Label htmlFor='first_name'>First name</Label>
-          <Input id='first-name' name='first-name' placeholder={firstName} />
-          <FormFieldErrorMessage errors={errors?.firstName} />
+          <Label htmlFor='firstname'>First name</Label>
+          <Input id='firstname' name='firstname' placeholder={firstName} />
+          {hasValidationErrors && (
+            <FormFieldErrorMessage errors={state.errors?.firstName} />
+          )}
         </div>
         <div>
-          <Label htmlFor='last_name'>Last name</Label>
-          <Input id='last-name' name='last-name' placeholder={lastName} />
-          <FormFieldErrorMessage errors={errors?.lastName} />
+          <Label htmlFor='lastname'>Last name</Label>
+          <Input id='lastname' name='lastname' placeholder={lastName} />
+          {hasValidationErrors && (
+            <FormFieldErrorMessage errors={state.errors?.lastName} />
+          )}
         </div>
         <div>
           <Label>Email</Label>
