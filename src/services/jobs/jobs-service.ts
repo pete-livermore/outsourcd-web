@@ -85,14 +85,12 @@ export class JobsService {
     const apiPath = basePath + (query ? `?${query}` : '')
 
     try {
-      console.log('this.apiClient.get =>', this.apiClient.get)
       const { data } = await this.apiClient.get<{ data: JobDto }>(apiPath)
       return {
         type: 'success',
         data: this.parseDto(data),
       }
     } catch (e) {
-      console.log(e)
       logger.error(e)
       if (e instanceof HTTPError && e.status === 401) {
         return {
