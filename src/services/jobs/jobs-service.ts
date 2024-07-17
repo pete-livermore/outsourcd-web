@@ -50,7 +50,8 @@ export interface Job {
 }
 
 export class JobsService {
-  private static instance: JobsService
+  private static instance: JobsService | null = null
+  private readonly jobsApiPath = '/api/v1/jobs'
 
   private constructor(private readonly apiClient: IApiClient) {
     this.apiClient = apiClient
@@ -62,8 +63,6 @@ export class JobsService {
     }
     return JobsService.instance
   }
-
-  private readonly jobsApiPath = '/api/v1/jobs'
 
   private parseDto(dto: JobDto) {
     return {
@@ -86,12 +85,14 @@ export class JobsService {
     const apiPath = basePath + (query ? `?${query}` : '')
 
     try {
+      console.log('this.apiClient.get =>', this.apiClient.get)
       const { data } = await this.apiClient.get<{ data: JobDto }>(apiPath)
       return {
         type: 'success',
         data: this.parseDto(data),
       }
     } catch (e) {
+      console.log(e)
       logger.error(e)
       if (e instanceof HTTPError && e.status === 401) {
         return {

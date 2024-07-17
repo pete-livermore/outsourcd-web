@@ -21,7 +21,7 @@ interface AuthenticatedUserData {
 }
 
 export class AuthService {
-  private static instance: AuthService
+  private static instance: AuthService | null = null
 
   private constructor(private readonly apiClient: IApiClient) {
     this.apiClient = apiClient

@@ -15,6 +15,7 @@ describe('API client', () => {
   let apiClient: IApiClient
 
   beforeEach(() => {
+    ApiClient['instance'] = null
     apiClient = ApiClient.getInstance()
   })
 

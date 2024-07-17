@@ -20,7 +20,7 @@ interface JobApplication {
 }
 
 export class JobApplicationsService {
-  private static instance: JobApplicationsService
+  private static instance: JobApplicationsService | null = null
   private readonly jobsApiPath = '/api/v1/jobs'
 
   private constructor(private readonly apiClient: IApiClient) {

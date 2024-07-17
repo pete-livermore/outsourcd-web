@@ -25,7 +25,7 @@ export interface UpdateUserDto {
 }
 
 export class UsersService {
-  private static instance: UsersService
+  private static instance: UsersService | null = null
 
   private constructor(private readonly apiClient: IApiClient) {
     this.apiClient = apiClient

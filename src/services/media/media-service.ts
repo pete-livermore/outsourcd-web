@@ -13,7 +13,7 @@ interface FileUploadResponse {
 }
 
 export class MediaService {
-  private static instance: MediaService
+  private static instance: MediaService | null = null
 
   private constructor(private readonly apiClient: IApiClient) {
     this.apiClient = apiClient
