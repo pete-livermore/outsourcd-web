@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "cypress:open": "cypress open",
     "dev": "next dev",
     "db:push": "prisma generate && prisma db push",
     "db:pull": "prisma db pull",
