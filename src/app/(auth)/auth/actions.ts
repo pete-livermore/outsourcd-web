@@ -7,8 +7,7 @@ import { z } from 'zod'
 import { env } from '@/config/env'
 import { SERVER_ERROR_MESSAGE } from '@/constants/errors/messages/server-error-message'
 import { VALIDATION_ERROR_MESSAGE } from '@/constants/errors/messages/validation-error-message'
-import { ApiClient } from '@/lib/api/client/api-client'
-import { AuthService } from '@/services/auth/auth-service'
+import { createAuthService } from '@/services/auth/auth-service-factory'
 
 import { LoginFormState } from './login/_components/login-form'
 
@@ -46,7 +45,7 @@ export async function login(
     }
   }
 
-  const authService = AuthService.getInstance(ApiClient.getInstance())
+  const authService = createAuthService()
   const result = await authService.login(validatedFields.data)
 
   if (result.type === 'failure') {
