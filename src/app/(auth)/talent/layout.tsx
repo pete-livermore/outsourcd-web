@@ -2,10 +2,9 @@ import { Briefcase, CircleUserRound } from 'lucide-react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
-import { ApiClient } from '@/lib/api/client/api-client'
 import { getAuthToken } from '@/lib/auth/token'
 import { authRedirect, errorRedirect } from '@/lib/navigation/redirect'
-import { UsersService } from '@/services/users/users-service'
+import { createUsersService } from '@/services/users/users-service-factory'
 
 import { AvatarDropdown } from './_components/avatar-dropdown'
 import { CompanyLogo } from './_components/company-logo'
@@ -39,7 +38,7 @@ export default async function TalentLayout({
     return authRedirect()
   }
 
-  const usersService = UsersService.getInstance(ApiClient.getInstance(token))
+  const usersService = createUsersService(token)
   const result = await usersService.getAuthenticatedUser()
 
   if (result.type === 'failure') {
