@@ -1,7 +1,6 @@
-import { ApiClient } from '@/lib/api/client/api-client'
 import { getAuthToken } from '@/lib/auth/token'
 import { authRedirect, errorRedirect } from '@/lib/navigation/redirect'
-import { JobsService } from '@/services/jobs/jobs-service'
+import { createJobsService } from '@/services/jobs/jobs-service-factory'
 
 import { JobsPanel } from './_components'
 
@@ -27,7 +26,7 @@ export default async function JobsPage({
     },
     {},
   )
-  const jobsService = JobsService.getInstance(ApiClient.getInstance(token))
+  const jobsService = createJobsService(token)
   const jobsResult = await jobsService.getMany({
     filters,
     populate: { company: true },
