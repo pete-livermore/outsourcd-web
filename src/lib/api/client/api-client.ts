@@ -17,28 +17,18 @@ interface AuthHeader {
 }
 
 export class ApiClient implements IApiClient {
-  private static instance: ApiClient | null = null
   private readonly url: string
   private authHeader: AuthHeader = {}
 
-  private constructor(token?: string) {
+  constructor(token?: string) {
     this.url = env.SERVER_URL
     if (token) {
-      this.authHeader['Authorization'] = `Bearer ${token}`
+      this.authenticate(token)
     }
   }
 
   private authenticate(token: string) {
     this.authHeader['Authorization'] = `Bearer ${token}`
-  }
-
-  public static getInstance(token?: string): ApiClient {
-    if (!ApiClient.instance) {
-      ApiClient.instance = new ApiClient(token)
-    } else if (token) {
-      ApiClient.instance.authenticate(token)
-    }
-    return ApiClient.instance
   }
 
   private mergeHeaders(customHeaders?: HeadersInit): HeadersInit {
@@ -72,9 +62,6 @@ export class ApiClient implements IApiClient {
     const res = await this.makeRequest(path, {
       method: 'POST',
       body: JSON.stringify(data),
-      headers: {
-        'Content-Type': 'application/json',
-      },
     })
 
     const responseBody = await res.json()
@@ -90,9 +77,6 @@ export class ApiClient implements IApiClient {
     const res = await this.makeRequest(path, {
       method: 'PUT',
       body: JSON.stringify(data),
-      headers: {
-        'Content-Type': 'application/json',
-      },
     })
 
     const responseBody = await res.json()
