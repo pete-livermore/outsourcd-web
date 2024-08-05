@@ -4,7 +4,7 @@ import Link from 'next/link'
 
 import { getAuthToken } from '@/lib/auth/token'
 import { authRedirect, errorRedirect } from '@/lib/navigation/redirect'
-import { createUsersService } from '@/services/users/users-service-factory'
+import { createUsersService } from '@/services/users'
 
 import { AvatarDropdown } from './_components/avatar-dropdown'
 import { CompanyLogo } from './_components/company-logo'

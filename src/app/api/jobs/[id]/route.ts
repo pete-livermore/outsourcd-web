@@ -1,7 +1,6 @@
-import { ApiClient } from '@/lib/api/client/api-client'
 import { getAuthToken } from '@/lib/auth/token'
 import { generateErrResponse } from '@/lib/response/generate-error-response'
-import { JobsService } from '@/services/jobs/jobs-service'
+import { createJobsService } from '@/services/jobs'
 
 export async function GET(
   request: Request,
@@ -19,7 +18,7 @@ export async function GET(
     return
   }
 
-  const jobsService = JobsService.getInstance(ApiClient.getInstance(token))
+  const jobsService = createJobsService(token)
   const jobResult = await jobsService.getOne(parseInt(id), { company: true })
 
   if (jobResult.type === 'failure') {

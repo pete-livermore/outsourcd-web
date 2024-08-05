@@ -7,7 +7,7 @@ import { SERVER_ERROR_MESSAGE } from '@/constants/errors/messages/server-error-m
 import { VALIDATION_ERROR_MESSAGE } from '@/constants/errors/messages/validation-error-message'
 import { getAuthToken } from '@/lib/auth/token'
 import { authRedirect } from '@/lib/navigation/redirect'
-import { createJobApplicationService } from '@/services/jobs/applications/job-application-factory'
+import { createJobApplicationsService } from '@/services/jobs/applications'
 import { textFormFieldSchema } from '@/utils/validation/form'
 
 import { JobApplicationFormState } from './_components/application-form'
@@ -66,7 +66,7 @@ export async function sendJobApplication(
     status: 'pending',
   }
 
-  const jobApplicationsService = createJobApplicationService(token)
+  const jobApplicationsService = createJobApplicationsService(token)
   const jobUpdateResult = await jobApplicationsService.create(jobApplicationDto)
 
   if (jobUpdateResult.type === 'failure') {

@@ -2,10 +2,9 @@ import { redirect } from 'next/navigation'
 import { notFound } from 'next/navigation'
 
 import { Heading } from '@/components/ui/heading'
-import { ApiClient } from '@/lib/api/client/api-client'
 import { getAuthToken } from '@/lib/auth/token'
 import { authRedirect } from '@/lib/navigation/redirect'
-import { JobsService } from '@/services/jobs/jobs-service'
+import { createJobsService } from '@/services/jobs'
 
 import { CompanyInfo } from '../../_components'
 import { JobApplicationForm } from './_components/application-form'
@@ -23,7 +22,7 @@ export default async function JobApplicationPage({
     return authRedirect()
   }
 
-  const jobsService = JobsService.getInstance(ApiClient.getInstance(token))
+  const jobsService = createJobsService(token)
   const jobResult = await jobsService.getOne(id, { company: true })
 
   if (jobResult.type === 'failure') {

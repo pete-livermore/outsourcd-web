@@ -7,7 +7,7 @@ import { z } from 'zod'
 import { env } from '@/config/env'
 import { SERVER_ERROR_MESSAGE } from '@/constants/errors/messages/server-error-message'
 import { VALIDATION_ERROR_MESSAGE } from '@/constants/errors/messages/validation-error-message'
-import { createAuthService } from '@/services/auth/auth-service-factory'
+import { createAuthService } from '@/services/auth'
 
 import { LoginFormState } from './login/_components/login-form'
 

@@ -40,10 +40,11 @@ export async function updateUser(
   const token = getAuthToken()
 
   if (!token) {
-    authRedirect()
+    return authRedirect()
   }
 
-  const usersService = UsersService.getInstance(ApiClient.getInstance(token))
+  const apiClient = new ApiClient(token)
+  const usersService = new UsersService(apiClient)
   const getUserResult = await usersService.getAuthenticatedUser()
 
   if (getUserResult.type === 'failure') {
@@ -72,7 +73,7 @@ export async function updateUser(
       }
     }
 
-    const mediaService = MediaService.getInstance(ApiClient.getInstance(token))
+    const mediaService = new MediaService(apiClient)
     const uploadResult = await mediaService.upload(profileImage, {
       ext: fileType.ext,
       name: fileName,

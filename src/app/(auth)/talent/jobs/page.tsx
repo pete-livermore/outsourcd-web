@@ -1,6 +1,6 @@
 import { getAuthToken } from '@/lib/auth/token'
 import { authRedirect, errorRedirect } from '@/lib/navigation/redirect'
-import { createJobsService } from '@/services/jobs/jobs-service-factory'
+import { createJobsService } from '@/services/jobs'
 
 import { JobsPanel } from './_components'
 
