@@ -21,17 +21,11 @@ interface AuthenticatedUserData {
 }
 
 export class AuthService {
-  private static instance: AuthService | null = null
+  private apiPath: string
 
-  private constructor(private readonly apiClient: IApiClient) {
+  constructor(private readonly apiClient: IApiClient) {
     this.apiClient = apiClient
-  }
-
-  public static getInstance(apiClient: IApiClient) {
-    if (!AuthService.instance) {
-      AuthService.instance = new AuthService(apiClient)
-    }
-    return AuthService.instance
+    this.apiPath = '/v1/auth/login'
   }
 
   private parseDto({ token, user }: LoginResponseDto) {
@@ -41,7 +35,7 @@ export class AuthService {
   async login(loginDto: LoginDto): Promise<Result<AuthenticatedUserData>> {
     try {
       const data = await this.apiClient.post<LoginResponseDto>(
-        '/v1/auth/login',
+        this.apiPath,
         loginDto,
       )
       return {

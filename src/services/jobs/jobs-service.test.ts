@@ -7,15 +7,13 @@ describe('Jobs service', () => {
   let jobsService: JobsService
 
   beforeEach(() => {
-    JobsService['instance'] = null
-
     mockApiClient = {
       put: jest.fn(),
       get: jest.fn(),
       post: jest.fn(),
     }
 
-    jobsService = JobsService.getInstance(mockApiClient)
+    jobsService = new JobsService(mockApiClient)
   })
 
   it('should be defined', () => {

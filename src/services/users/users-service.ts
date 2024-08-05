@@ -25,17 +25,8 @@ export interface UpdateUserDto {
 }
 
 export class UsersService {
-  private static instance: UsersService | null = null
-
-  private constructor(private readonly apiClient: IApiClient) {
+  constructor(private readonly apiClient: IApiClient) {
     this.apiClient = apiClient
-  }
-
-  public static getInstance(apiClient: IApiClient): UsersService {
-    if (!UsersService.instance) {
-      UsersService.instance = new UsersService(apiClient)
-    }
-    return UsersService.instance
   }
 
   private parseDto(dto: AuthenticatedUserDto): AuthenticatedUser {

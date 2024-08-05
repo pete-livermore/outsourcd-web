@@ -13,17 +13,8 @@ interface FileUploadResponse {
 }
 
 export class MediaService {
-  private static instance: MediaService | null = null
-
-  private constructor(private readonly apiClient: IApiClient) {
+  constructor(private readonly apiClient: IApiClient) {
     this.apiClient = apiClient
-  }
-
-  public static getInstance(apiClient: IApiClient) {
-    if (!MediaService.instance) {
-      MediaService.instance = new MediaService(apiClient)
-    }
-    return MediaService.instance
   }
 
   async upload(

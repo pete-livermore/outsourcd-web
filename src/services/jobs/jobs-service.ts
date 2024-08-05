@@ -50,18 +50,10 @@ export interface Job {
 }
 
 export class JobsService {
-  private static instance: JobsService | null = null
   private readonly jobsApiPath = '/api/v1/jobs'
 
-  private constructor(private readonly apiClient: IApiClient) {
+  constructor(private readonly apiClient: IApiClient) {
     this.apiClient = apiClient
-  }
-
-  public static getInstance(apiClient: IApiClient): JobsService {
-    if (!JobsService.instance) {
-      JobsService.instance = new JobsService(apiClient)
-    }
-    return JobsService.instance
   }
 
   private parseDto(dto: JobDto) {
