@@ -5,10 +5,9 @@ import { z } from 'zod'
 
 import { SERVER_ERROR_MESSAGE } from '@/constants/errors/messages/server-error-message'
 import { VALIDATION_ERROR_MESSAGE } from '@/constants/errors/messages/validation-error-message'
-import { ApiClient } from '@/lib/api/client/api-client'
 import { getAuthToken } from '@/lib/auth/token'
 import { authRedirect } from '@/lib/navigation/redirect'
-import { JobApplicationsService } from '@/services/jobs/applications/job-applications-service'
+import { createJobApplicationService } from '@/services/jobs/applications/job-application-factory'
 import { textFormFieldSchema } from '@/utils/validation/form'
 
 import { JobApplicationFormState } from './_components/application-form'
@@ -56,7 +55,7 @@ export async function sendJobApplication(
   const token = getAuthToken()
 
   if (!token) {
-    authRedirect()
+    return authRedirect()
   }
 
   const jobApplicationDto = {
@@ -67,9 +66,7 @@ export async function sendJobApplication(
     status: 'pending',
   }
 
-  const jobApplicationsService = JobApplicationsService.getInstance(
-    ApiClient.getInstance(token),
-  )
+  const jobApplicationsService = createJobApplicationService(token)
   const jobUpdateResult = await jobApplicationsService.create(jobApplicationDto)
 
   if (jobUpdateResult.type === 'failure') {
