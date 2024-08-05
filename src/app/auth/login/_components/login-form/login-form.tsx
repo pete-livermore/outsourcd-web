@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useRef } from 'react'
 import { useFormState, useFormStatus } from 'react-dom'
 
-import { login } from '@/app/(auth)/auth/actions'
+import { login } from '@/app/auth/actions'
 import { FormFieldErrorMessage } from '@/components/form/error/form-field-error-message'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
