@@ -1,21 +1,12 @@
+import { ZodError } from 'zod'
+
 import { HTTPError } from '@/errors/http-error'
 import { IApiClient } from '@/lib/api/client/api-client'
+import { UpdateUserDto, UserDto } from '@/schema/user'
 import { FailureResult, Result } from '@/types/result/result'
 import { logger } from '@/utils/logging/logger'
 
-export interface AuthenticatedUserDto {
-  id: number
-  first_name: string
-  last_name: string
-  email: string
-  profile_image: {
-    id: number
-    url: string
-  }
-  biography: string
-}
-
-interface AuthenticatedUser {
+interface User {
   id: number
   email: string
   firstName: string
@@ -26,13 +17,6 @@ interface AuthenticatedUser {
   biography: string
 }
 
-export interface UpdateUserDto {
-  biography?: string
-  firstName?: string
-  lastName?: string
-  profileImage?: number
-}
-
 export class UsersService {
   private apiPath: string
 
@@ -41,8 +25,9 @@ export class UsersService {
     this.apiPath = '/api/v1/users'
   }
 
-  // Todo: validate DTO
-  private parseDto(dto: AuthenticatedUserDto): AuthenticatedUser {
+  private parseDto(dto: UserDto): User {
+    UserDto.parse(dto)
+
     const image = dto.profile_image ? { url: dto.profile_image.url } : null
 
     return {
@@ -56,22 +41,30 @@ export class UsersService {
   }
 
   private handleError(e: unknown): FailureResult {
-    logger.error(e)
+    if (e instanceof ZodError) {
+      logger.error(`invalid DTO - ${JSON.stringify(e.format())}`)
+      return {
+        type: 'failure',
+        reason: 'validation-error',
+      }
+    }
     if (e instanceof HTTPError && e.status === 401) {
+      logger.error(e)
       return {
         type: 'failure',
         reason: 'auth-error',
       }
     }
+    logger.error(e)
     return {
       type: 'failure',
       reason: 'server-error',
     }
   }
 
-  async getAuthenticatedUser(): Promise<Result<AuthenticatedUser>> {
+  async getAuthenticatedUser(): Promise<Result<User>> {
     try {
-      const { data } = await this.apiClient.get<{ data: AuthenticatedUserDto }>(
+      const { data } = await this.apiClient.get<{ data: UserDto }>(
         `${this.apiPath}/me`,
       )
       return {
@@ -84,14 +77,16 @@ export class UsersService {
   }
 
   async update(userId: number, update: UpdateUserDto): Promise<Result> {
-    const formattedDto = {
+    UpdateUserDto.parse(update)
+
+    const payload = {
       first_name: update.firstName,
       last_name: update.lastName,
       biography: update.biography,
       profile_image: update.profileImage,
     }
     try {
-      await this.apiClient.patch(`${this.apiPath}/${userId}`, formattedDto)
+      await this.apiClient.patch(`${this.apiPath}/${userId}`, payload)
       return {
         type: 'success',
         data: null,

@@ -1,21 +1,10 @@
 import { HTTPError } from '@/errors/http-error'
 import { IApiClient } from '@/lib/api/client/api-client'
+import { LoginDto, LoginResponseDto } from '@/schema/auth'
 import { Result } from '@/types/result/result'
 import { logger } from '@/utils/logging/logger'
 
-interface LoginDto {
-  password: string
-  email: string
-}
-
-interface LoginResponseDto {
-  token: string
-  user: {
-    id: string
-  }
-}
-
-interface AuthenticatedUserData {
+interface AuthSession {
   token: string
   user: number
 }
@@ -28,11 +17,11 @@ export class AuthService {
     this.apiPath = '/v1/auth'
   }
 
-  private parseDto({ token, user }: LoginResponseDto) {
+  private parseDto({ token, user }: LoginResponseDto): AuthSession {
     return { token, user: parseInt(user.id) }
   }
 
-  async login(loginDto: LoginDto): Promise<Result<AuthenticatedUserData>> {
+  async login(loginDto: LoginDto): Promise<Result<AuthSession>> {
     try {
       const data = await this.apiClient.post<LoginResponseDto>(
         `${this.apiPath}/login`,
@@ -43,13 +32,13 @@ export class AuthService {
         data: this.parseDto(data),
       }
     } catch (e) {
-      logger.error(e)
       if (e instanceof HTTPError && e.status === 401) {
         return {
           type: 'failure',
           reason: 'auth-error',
         }
       }
+      logger.error(`Login failed`, e)
       return {
         type: 'failure',
         reason: 'server-error',

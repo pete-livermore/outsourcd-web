@@ -2,6 +2,7 @@ import qs from 'qs'
 
 import { HTTPError } from '@/errors/http-error'
 import { IApiClient } from '@/lib/api/client/api-client'
+import { JobDto } from '@/schema/job'
 import { Result } from '@/types/result/result'
 import { logger } from '@/utils/logging/logger'
 
@@ -18,33 +19,21 @@ interface GetJobsParams {
   populate?: PopulateParams
 }
 
-interface CompanyRelationDto {
-  id: number
-  name: string
-}
-
-interface SalaryDto {
-  currency: string
-  value: { max: number; min: number }
-  period: string
-}
-
-export interface JobDto {
-  id: number
-  title: string
-  description: string
-  company: CompanyRelationDto
-  salary: SalaryDto
-  employment_type: string
-  start_date: string
-}
-
 export interface Job {
   id: number
   title: string
   description: string
-  company: CompanyRelationDto
-  salary: SalaryDto
+  company: {
+    name: string
+  }
+  salary: {
+    value: {
+      min: number
+      max: number
+    }
+    currency: string
+    period: string
+  }
   employmentType: string
   startDate: string
 }
@@ -56,12 +45,14 @@ export class JobsService {
     this.apiClient = apiClient
   }
 
-  private parseDto(dto: JobDto) {
+  private parseDto(dto: JobDto): Job {
     return {
       id: dto.id,
       title: dto.title,
       description: dto.description,
-      company: dto.company,
+      company: {
+        name: dto.company.name,
+      },
       salary: dto.salary,
       employmentType: dto.employment_type,
       startDate: dto.start_date,
