@@ -13,10 +13,14 @@ import { Slider } from '@/components/ui/slider'
 import { generateCroppedImage, ImageCrop } from '@/lib/images/crop'
 
 interface EditProfileImageProps {
-  onEditComplete: (blob: Blob) => void
+  currentImage: string | undefined
+  onEditComplete: (blob: Blob) => void | Promise<void>
 }
 
-export function EditProfileImage({ onEditComplete }: EditProfileImageProps) {
+export function EditProfileImage({
+  onEditComplete,
+  currentImage,
+}: EditProfileImageProps) {
   const [uncroppedImage, setUncroppedImage] = useState<
     File & { preview: string }
   >()
@@ -59,9 +63,20 @@ export function EditProfileImage({ onEditComplete }: EditProfileImageProps) {
 
   async function handleImageEditComplete() {
     if (croppedImage) {
-      await onEditComplete(croppedImage)
+      onEditComplete(croppedImage)
+      setUncroppedImage(undefined)
     }
   }
+
+  const imageSrc = croppedImage
+    ? URL.createObjectURL(croppedImage)
+    : currentImage ?? '/assets/images/profile-placeholder.png'
+
+  const imageAlt = croppedImage
+    ? 'new image'
+    : currentImage
+      ? 'profile image'
+      : 'profile placeholder'
 
   return (
     <Dialog open={!!uncroppedImage} onOpenChange={handleCloseModal}>
@@ -104,10 +119,10 @@ export function EditProfileImage({ onEditComplete }: EditProfileImageProps) {
         <div>
           <div className='relative h-72 w-full'>
             <Image
-              src='/assets/images/profile-placeholder.png'
-              alt='profile placeholder'
+              src={imageSrc}
+              alt={imageAlt}
               fill
-              objectFit='cover'
+              style={{ objectFit: 'cover' }}
             />
           </div>
           <div className='mt-2'>
