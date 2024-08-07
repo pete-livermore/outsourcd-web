@@ -13,7 +13,6 @@ interface JobsListItemProps {
   title: string
   description: string
   company: {
-    id: number
     name: string
   }
 }
