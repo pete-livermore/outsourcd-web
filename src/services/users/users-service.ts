@@ -8,6 +8,11 @@ export interface AuthenticatedUserDto {
   first_name: string
   last_name: string
   email: string
+  profile_image: {
+    id: number
+    url: string
+  }
+  biography: string
 }
 
 interface AuthenticatedUser {
@@ -15,6 +20,10 @@ interface AuthenticatedUser {
   email: string
   firstName: string
   lastName: string
+  image: {
+    url: string
+  } | null
+  biography: string
 }
 
 export interface UpdateUserDto {
@@ -25,16 +34,24 @@ export interface UpdateUserDto {
 }
 
 export class UsersService {
+  private apiPath: string
+
   constructor(private readonly apiClient: IApiClient) {
     this.apiClient = apiClient
+    this.apiPath = '/api/v1/users'
   }
 
+  // Todo: validate DTO
   private parseDto(dto: AuthenticatedUserDto): AuthenticatedUser {
+    const image = dto.profile_image ? { url: dto.profile_image.url } : null
+
     return {
       id: dto.id,
       email: dto.email,
       firstName: dto.first_name,
       lastName: dto.last_name,
+      image,
+      biography: dto.biography,
     }
   }
 
@@ -55,7 +72,7 @@ export class UsersService {
   async getAuthenticatedUser(): Promise<Result<AuthenticatedUser>> {
     try {
       const { data } = await this.apiClient.get<{ data: AuthenticatedUserDto }>(
-        '/api/v1/users/me',
+        `${this.apiPath}/me`,
       )
       return {
         type: 'success',
@@ -74,7 +91,7 @@ export class UsersService {
       profile_image: update.profileImage,
     }
     try {
-      await this.apiClient.put(`/api/v1/users/${userId}`, formattedDto)
+      await this.apiClient.patch(`${this.apiPath}/${userId}`, formattedDto)
       return {
         type: 'success',
         data: null,
