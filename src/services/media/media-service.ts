@@ -31,9 +31,7 @@ export class MediaService {
     try {
       const { data } = await this.apiClient.post<{ data: FileUploadResponse }>(
         '/api/v1/uploads/file',
-        {
-          body: newForm,
-        },
+        newForm,
       )
       return {
         type: 'success',
