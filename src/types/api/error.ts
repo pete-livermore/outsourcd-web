@@ -3,3 +3,4 @@ export type ApiError =
   | 'server-error'
   | 'resource-conflict-error'
   | 'not-found-error'
+  | 'bad-request-error'
