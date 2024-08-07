@@ -59,7 +59,9 @@ export async function updateUser(
     lastName: formData.get('lastname'),
   }
 
-  const profileImage = additionalFormData.get('profileImage') as Blob
+  const profileImage = additionalFormData.get('profileImage') as
+    | Blob
+    | undefined
 
   if (profileImage) {
     const fileName = `profile_image_${user.id}`
