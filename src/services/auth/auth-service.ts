@@ -25,7 +25,7 @@ export class AuthService {
 
   constructor(private readonly apiClient: IApiClient) {
     this.apiClient = apiClient
-    this.apiPath = '/v1/auth/login'
+    this.apiPath = '/v1/auth'
   }
 
   private parseDto({ token, user }: LoginResponseDto) {
@@ -35,7 +35,7 @@ export class AuthService {
   async login(loginDto: LoginDto): Promise<Result<AuthenticatedUserData>> {
     try {
       const data = await this.apiClient.post<LoginResponseDto>(
-        this.apiPath,
+        `${this.apiPath}/login`,
         loginDto,
       )
       return {
