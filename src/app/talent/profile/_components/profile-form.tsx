@@ -42,14 +42,22 @@ interface ProfileFormProps {
   firstName: string
   lastName: string
   email: string
+  image?: string
+  biography: string
 }
 
-export function ProfileForm({ firstName, lastName, email }: ProfileFormProps) {
+export function ProfileForm({
+  firstName,
+  lastName,
+  email,
+  image,
+  biography,
+}: ProfileFormProps) {
   const [selectedEmail, setSelectedEmail] = useState<string | undefined>()
   const { pending } = useFormStatus()
-  const imageFormData = new FormData()
+  const [additionalFormData, setAdditionalFormData] = useState(new FormData())
   const [open, setOpen] = useState(false)
-  const updateUserWithImage = updateUser.bind(null, imageFormData)
+  const updateUserWithImage = updateUser.bind(null, additionalFormData)
   const [state, formAction] = useFormState(updateUserWithImage, null)
   const { toast } = useToast()
 
@@ -61,8 +69,11 @@ export function ProfileForm({ firstName, lastName, email }: ProfileFormProps) {
     setOpen(false)
   }
 
-  function handleImageEditComplete(blob: Blob) {
+  async function handleImageEditComplete(blob: Blob) {
+    const imageFormData = new FormData()
     imageFormData.append('profileImage', blob)
+    imageFormData.append('email', email)
+    setAdditionalFormData(imageFormData)
   }
 
   useEffect(() => {
@@ -74,6 +85,7 @@ export function ProfileForm({ firstName, lastName, email }: ProfileFormProps) {
       } else if (state.type === 'failure') {
         toast({
           title: 'Profile update failed',
+          variant: 'destructive',
           description: state.message,
         })
       }
@@ -86,21 +98,35 @@ export function ProfileForm({ firstName, lastName, email }: ProfileFormProps) {
     <form className='grid grid-cols-2' action={formAction}>
       <div className='flex max-w-lg flex-col space-y-6'>
         <div>
-          <Label htmlFor='firstname'>First name</Label>
-          <Input id='firstname' name='firstname' placeholder={firstName} />
+          <Label htmlFor='firstname' className='mb-1.5 block'>
+            First name
+          </Label>
+          <Input
+            id='firstname'
+            name='firstname'
+            placeholder={firstName}
+            defaultValue={firstName}
+          />
           {hasValidationErrors && (
             <FormFieldErrorMessage errors={state.errors?.firstName} />
           )}
         </div>
         <div>
-          <Label htmlFor='lastname'>Last name</Label>
-          <Input id='lastname' name='lastname' placeholder={lastName} />
+          <Label htmlFor='lastname' className='mb-1.5 block'>
+            Last name
+          </Label>
+          <Input
+            id='lastname'
+            name='lastname'
+            placeholder={lastName}
+            defaultValue={lastName}
+          />
           {hasValidationErrors && (
             <FormFieldErrorMessage errors={state.errors?.lastName} />
           )}
         </div>
         <div>
-          <Label>Email</Label>
+          <Label className='mb-1.5 block'>Email</Label>
           <div>
             <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
@@ -151,18 +177,24 @@ export function ProfileForm({ firstName, lastName, email }: ProfileFormProps) {
           </div>
         </div>
         <div>
-          <Label htmlFor='biography'>Biography</Label>
+          <Label htmlFor='biography' className='mb-1.5 block'>
+            Biography
+          </Label>
           <Textarea
-            placeholder='Type your message here.'
+            placeholder={biography}
             id='biography'
             name='biography'
+            defaultValue={biography}
           />
         </div>
         <div>
           <Button disabled={pending}>Update profile</Button>
         </div>
       </div>
-      <EditProfileImage onEditComplete={handleImageEditComplete} />
+      <EditProfileImage
+        onEditComplete={handleImageEditComplete}
+        currentImage={image}
+      />
     </form>
   )
 }
