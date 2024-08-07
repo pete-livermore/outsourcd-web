@@ -46,9 +46,7 @@ describe('API client', () => {
           await apiClient.get(path)
 
           expect(global.fetch).toHaveBeenCalledWith(expectedUrl, {
-            headers: {
-              'Content-Type': 'application/json',
-            },
+            headers: {},
           })
         })
 

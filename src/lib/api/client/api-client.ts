@@ -10,6 +10,7 @@ export interface IApiClient {
   get<T>(urlPath: string): Promise<T>
   post<T>(urlPath: string, data: unknown): Promise<T>
   put<T>(urlPath: string, data: unknown): Promise<T>
+  patch<T>(urlPath: string, data: unknown): Promise<T>
 }
 
 interface AuthHeader {
@@ -35,20 +36,17 @@ export class ApiClient implements IApiClient {
     return {
       ...customHeaders,
       ...this.authHeader,
-      'Content-Type': 'application/json',
     }
   }
 
-  private async makeRequest(path: string, options?: RequestInit) {
+  private async makeRequest(path: string, init?: RequestInit) {
     return fetch(this.url + path, {
-      ...options,
-      headers: this.mergeHeaders(options?.headers),
+      ...init,
+      headers: this.mergeHeaders(init?.headers),
     })
   }
 
-  async get<T>(path: string): Promise<T> {
-    const res = await this.makeRequest(path)
-
+  private async handleResponse<T>(res: Response) {
     const responseBody: JSONResponse<T> = await res.json()
 
     if (!res.ok) {
@@ -58,33 +56,53 @@ export class ApiClient implements IApiClient {
     return responseBody as T
   }
 
+  async get<T>(path: string): Promise<T> {
+    const res = await this.makeRequest(path)
+    return this.handleResponse(res)
+  }
+
+  private getPayloadData(data: unknown) {
+    if (data instanceof FormData) {
+      return { body: data }
+    } else {
+      const headers = { 'Content-Type': 'application/json' }
+      return { body: JSON.stringify(data), headers }
+    }
+  }
+
   async post<T>(path: string, data: unknown): Promise<T> {
+    const { body, headers } = this.getPayloadData(data)
+
     const res = await this.makeRequest(path, {
       method: 'POST',
-      body: JSON.stringify(data),
+      body,
+      headers,
     })
 
-    const responseBody = await res.json()
-
-    if (!res.ok) {
-      throw new HTTPError(res.status, res.statusText, responseBody)
-    }
-
-    return responseBody as T
+    return this.handleResponse(res)
   }
 
   async put<T>(path: string, data: unknown): Promise<T> {
+    const { body, headers } = this.getPayloadData(data)
+
     const res = await this.makeRequest(path, {
       method: 'PUT',
-      body: JSON.stringify(data),
+      body,
+      headers,
     })
 
-    const responseBody = await res.json()
+    return this.handleResponse(res)
+  }
 
-    if (!res.ok) {
-      throw new HTTPError(res.status, res.statusText, responseBody)
-    }
+  async patch<T>(path: string, data: unknown): Promise<T> {
+    const { body, headers } = this.getPayloadData(data)
 
-    return responseBody as T
+    const res = await this.makeRequest(path, {
+      method: 'PATCH',
+      body,
+      headers,
+    })
+
+    return this.handleResponse(res)
   }
 }
