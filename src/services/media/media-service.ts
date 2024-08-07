@@ -38,7 +38,7 @@ export class MediaService {
         data,
       }
     } catch (e) {
-      logger.error(e)
+      logger.error(`file upload failed -`, e)
       if (e instanceof HTTPError && e.status === 401) {
         return {
           type: 'failure',
