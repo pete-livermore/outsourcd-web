@@ -42,7 +42,9 @@ export default async function TalentLayout({
   const result = await usersService.getAuthenticatedUser()
 
   if (result.type === 'failure') {
-    return result.reason === 'auth-error' ? authRedirect() : errorRedirect()
+    return result.reason === 'auth-error'
+      ? authRedirect()
+      : errorRedirect(result.errors)
   }
 
   const user = result.data

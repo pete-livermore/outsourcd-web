@@ -20,7 +20,7 @@ export default async function ProfilePage() {
     if (result.reason === 'auth-error') {
       return authRedirect()
     }
-    return errorRedirect()
+    return errorRedirect(result.errors)
   }
 
   const user = result.data
@@ -39,6 +39,8 @@ export default async function ProfilePage() {
           firstName={user.firstName}
           lastName={user.lastName}
           email={user.email}
+          image={user.image?.url}
+          biography={user.biography}
         />
       </div>
     </div>

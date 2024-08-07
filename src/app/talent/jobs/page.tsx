@@ -33,7 +33,9 @@ export default async function JobsPage({
   })
 
   if (jobsResult.type === 'failure') {
-    return jobsResult.reason === 'auth-error' ? authRedirect() : errorRedirect()
+    return jobsResult.reason === 'auth-error'
+      ? authRedirect()
+      : errorRedirect(jobsResult.errors)
   }
 
   const jobs = jobsResult.data
