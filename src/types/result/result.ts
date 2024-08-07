@@ -1,7 +1,7 @@
 import { ApiError } from '../api/error'
 import { ResultType } from './result-type'
 
-type FailureReason = ApiError
+type FailureReason = ApiError | 'validation-error'
 
 interface BaseResult {
   type: ResultType
