@@ -5,10 +5,12 @@ const UserDto = z.object({
   first_name: z.string().min(1),
   last_name: z.string().min(1),
   email: z.string().email(),
-  profile_image: z.object({
-    id: z.number(),
-    url: z.string().url(),
-  }),
+  profile_image: z
+    .object({
+      id: z.number(),
+      url: z.string().url(),
+    })
+    .nullable(),
   biography: z.string(),
 })
 
