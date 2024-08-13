@@ -36,6 +36,10 @@ export interface Job {
   }
   employmentType: string
   startDate: string
+  location: {
+    city: string
+    country: string
+  }
 }
 
 export class JobsService {
@@ -56,6 +60,7 @@ export class JobsService {
       salary: dto.salary,
       employmentType: dto.employment_type,
       startDate: dto.start_date,
+      location: { city: dto.city, country: dto.country },
     }
   }
 

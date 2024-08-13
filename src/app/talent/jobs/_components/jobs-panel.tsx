@@ -48,6 +48,7 @@ export function JobsPanel({ jobs }: JobsProps) {
                 title={job.title}
                 description={job.description}
                 company={job.company}
+                location={job.location}
               />
             </DialogTrigger>
             <DialogContent className='min-h-[400px] sm:w-5/6'>

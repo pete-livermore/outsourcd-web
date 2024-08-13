@@ -15,14 +15,23 @@ interface JobsListItemProps {
   company: {
     name: string
   }
+  location: {
+    city: string
+    country: string
+  }
 }
 
 export function JobsListItem({
   id,
   title,
   description,
+  location,
   company,
 }: JobsListItemProps) {
+  const regionNames = new Intl.DisplayNames(['en'], { type: 'region' })
+  const { city, country } = location
+  const locationText = `${city}, ${regionNames.of(country)}`
+
   return (
     <Card key={id} className='h-full cursor-pointer'>
       <CardContent className='p-3'>
@@ -30,6 +39,7 @@ export function JobsListItem({
       </CardContent>
       <CardHeader>
         <CardTitle>{title}</CardTitle>
+        <p className='text-secondary-foreground'>{locationText}</p>
         <CardDescription className='truncate'>{description}</CardDescription>
       </CardHeader>
     </Card>

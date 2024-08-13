@@ -21,6 +21,8 @@ const JobDto = z.object({
   salary: SalaryDto,
   employment_type: z.string(),
   start_date: z.string(),
+  city: z.string(),
+  country: z.string(),
 })
 type JobDto = z.infer<typeof JobDto>
 
